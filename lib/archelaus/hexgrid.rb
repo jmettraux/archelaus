@@ -1,25 +1,23 @@
 
-class Archelaus::Hexgrid
+module Archelaus
 
-  def compute_row(lat, lon, step, width)
+  class << self
 
-    _, maxlon = compute_point(lat, lon, 90, width)
+    def compute_row(lat, lon, step, width)
 
-    row = [ [ lat, lon ] ]; loop do
-        la, lo = row.last
-        row << compute_point(la, lo, 90, step)
-        break if row.any? && row.last[1] > maxlon
-      end
+      lat1, lon1 = lat, lon
 
-    row
-  end
+      [ [ lat, lon ] ] +
+      (width - 1).times
+        .collect {
+          lat1, lon1 = compute_point(lat1, lon1, 90.0, step)
+          [ lat1, lon1 ] }
+    end
 
-  def compute_grid(lat, lon, step, height, width)
+    def compute_grid(lat, lon, step, width, height)
 
-    compute_row(lat, lon, step, width)
+      compute_row(lat, lon, step, width)
+    end
   end
 end
-
-#pp compute_grid(52.204, 0.142, 0.1, 100, 100)
-#p compute_distance(30.19, 71.51, 31.33, 74.21)
 
