@@ -1,4 +1,8 @@
 
+require 'cgi'
+require 'json'
+require 'net/http'
+
 require 'additions'
 
 
@@ -58,5 +62,7 @@ module Archelaus
   end
 end
 
+require 'archelaus/http'
 require 'archelaus/hexgrid'
+require 'archelaus/elevation'
 
