@@ -10,7 +10,6 @@ module Archelaus
       uq = query
         .inject(uri) { |r, (k, v)|
           "#{r}#{r.match(/\?/) ? '&' : '?'}#{k}=#{CGI.escape(v)}" }
-p uq
 
       req = Net::HTTP::Get.new(uq)
       req.add_field('Content-Type', 'application/json')
