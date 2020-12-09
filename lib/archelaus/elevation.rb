@@ -32,8 +32,7 @@ module Archelaus
         .reject { |point| has_elevation?(point) }
         .each_slice(100) { |points| get_elevations_100(points) }
 
-# TODO load...
-pp grid
+      grid.collect { |r| r.collect { |point| load_elevation(point) } }
     end
 
     ELEVATION_URI = 'https://api.opentopodata.org/v1/eudem25m'
