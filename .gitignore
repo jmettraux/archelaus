@@ -9,4 +9,5 @@
 .vimspec
 
 var/elevations/*.json
+var/overpasses/*.json
 

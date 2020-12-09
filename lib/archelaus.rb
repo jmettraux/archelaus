@@ -14,7 +14,9 @@ module Archelaus
 
     # http://www.movable-type.co.uk/scripts/latlong.html
 
-    def compute_distance(lat0, lon0, lat1, lon1)
+    def compute_distance(*points)
+
+      lat0, lon0, lat1, lon1 = points.flatten
 
       dlat = (lat1 - lat0).to_rad
       dlon = (lon1 - lon0).to_rad
@@ -26,7 +28,18 @@ module Archelaus
       EARTH_RADIUS * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     end
 
-    def compute_bearing(lat0, lon0, lat1, lon1)
+    def compute_distances(*points)
+
+      lat0, lon0, lat1, lon1 = points.flatten
+
+      { height: compute_distance(lat0, lon0, lat1, lon0).abs,
+        width: compute_distance(lat1, lon0, lat1, lon1).abs,
+        diag: compute_distance(lat0, lon0, lat1, lon1).abs }
+    end
+
+    def compute_bearing(*points)
+
+      lat0, lon0, lat1, lon1 = points.flatten
 
       dlon = (lon1 - lon0).to_rad
       lat0 = lat0.to_rad
@@ -41,7 +54,9 @@ module Archelaus
       Math.atan2(y, x).to_deg
     end
 
-    def compute_point(lat, lon, bearing, distance)
+    def compute_point(*point, bearing, distance)
+
+      lat, lon, bearing, distance = [ point, bearing, distance ].flatten
 
       lat = lat.to_rad
       lon = lon.to_rad
@@ -64,5 +79,6 @@ end
 
 require 'archelaus/http'
 require 'archelaus/hexgrid'
+require 'archelaus/overpass'
 require 'archelaus/elevation'
 

@@ -14,3 +14,8 @@ th:
 tl:
 	ruby -Ilib -rarchelaus -e "grid = Archelaus.compute_grid(54.4005, -0.4822, 100, 6, 6); Archelaus.get_elevations(grid)"
 
+ta:
+	ruby -Ilib -rarchelaus -e "p Archelaus.compute_distances(54.4005, -0.4822, 54.3966, -0.4737)"
+to:
+	ruby -Ilib -rarchelaus -e "Archelaus.get_elements([ 54.4005, -0.4822 ], [ 54.3966, -0.4737 ])"
+
