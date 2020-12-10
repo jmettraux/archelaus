@@ -16,10 +16,17 @@ module Archelaus
           [ lat1, lon1 ] }
     end
 
-    def compute_grid(lat, lon, step, width, height)
+    def compute_grid(lat, lon, step, width, height, origin=:nw)
 
-      compute_line(lat, lon, step, [ 150.0, 210.0 ], height)
-        .collect { |lat0, lon0| compute_line(lat0, lon0, step, 90.0, width) }
+      col_angles, row_angles =
+        case origin
+        when :nw then [ [ 150.0, 210.0 ], 90.0 ]
+        else [ [ 150.0, 210.0 ], 90.0 ]
+        end
+
+      compute_line(lat, lon, step, col_angles, height)
+        .collect { |lat0, lon0|
+          compute_line(lat0, lon0, step, row_angles, width) }
     end
   end
 end

@@ -8,7 +8,7 @@ class Float
     to_f * 180.0 / Math::PI
   end
 
-  def to_fixed4
+  def to_fixed5
     sprintf('%#.05g', self)
   end
 end

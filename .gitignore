@@ -8,6 +8,10 @@
 .vimmarks
 .vimspec
 
+.bxsinfo.yaml
+.errors
+.rspec.out
+
 var/elevations/*.json
 var/overpasses/*.json
 

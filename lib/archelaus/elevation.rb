@@ -72,7 +72,7 @@ module Archelaus
 
     def elevation_filename(point)
 
-      "var/elevations/e__#{point[0].to_fixed4}__#{point[1].to_fixed4}.json"
+      "var/elevations/e__#{point[0].to_fixed5}__#{point[1].to_fixed5}.json"
     end
   end
 end
