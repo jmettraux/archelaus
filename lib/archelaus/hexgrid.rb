@@ -20,13 +20,22 @@ module Archelaus
 
       col_angles, row_angles =
         case origin
-        when :nw then [ [ 150.0, 210.0 ], 90.0 ]
+        #when :nw then [ [ 150.0, 210.0 ], 90.0 ]
+        when :ne then [ [ 150.0, 210.0 ], 90.0 + 180.0 ]
+        when :sw then [ [ 30.0, -30.0 ], 90.0 ]
         else [ [ 150.0, 210.0 ], 90.0 ]
         end
 
-      compute_line(lat, lon, step, col_angles, height)
+      g = compute_line(lat, lon, step, col_angles, height)
         .collect { |lat0, lon0|
           compute_line(lat0, lon0, step, row_angles, width) }
+
+#p [ g[0][0], g[-1][0] ]
+      g.reverse! if g[0][0][0] < g[-1][0][0]
+#p [ g[0][0], g[0][-1] ]
+      g.each { |r| r.reverse! } if g[0][0][1] > g[0][-1][1]
+
+      g
     end
   end
 end
