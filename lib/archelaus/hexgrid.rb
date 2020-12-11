@@ -20,10 +20,10 @@ module Archelaus
 
       col_angles, row_angles =
         case origin
-        #when :nw then [ [ 150.0, 210.0 ], 90.0 ]
-        when :ne then [ [ 150.0, 210.0 ], 90.0 + 180.0 ]
-        when :sw then [ [ 30.0, -30.0 ], 90.0 ]
-        else [ [ 150.0, 210.0 ], 90.0 ]
+        when :ne then  [ [ 150.0, 210.0 ],                  90.0 + 180.0 ]
+        when :sw then  [ [ 150.0 + 180.0, 210.0 + 180.0 ],  90.0 ]
+        when :se then  [ [ 210.0 + 180.0, 150.0 + 180.0 ],  90.0 + 180.0 ]
+        else           [ [ 150.0, 210.0 ],                  90.0 ] # nw
         end
 
       g = compute_line(lat, lon, step, col_angles, height)
