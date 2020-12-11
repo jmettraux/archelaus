@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+$: << File.join(__dir__, '../lib')
+
+require 'archelaus'
+corner = ARGV.shift
+
+CORNERS = %w[ NE NW SE SW ]
+
+fail ArgumentError.new(
+  "corner #{corner.inspect} should be one of #{CORNERS.inspect}"
+) unless CORNERS.include?(corner)
+
+lat, lon = ARGV.shift.to_f, ARGV.shift.to_f
+
+  #54.41849, -0.88931,
+grid = Archelaus.compute_grid(
+  lat, lon,
+  100, 300, 300, corner.downcase.to_sym)
+
+Archelaus.get_elevations(grid)
+
