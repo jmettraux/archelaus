@@ -15,11 +15,17 @@ module Archelaus
 
       doc = Ox::Document.new
 
-      svg = maken(
-        doc,
-        :svg,
-        viewBox: '0 0 300 300', xmlns: 'http://www.w3.org/2000/svg')
-      #svg = maken(doc, :svg, viewBox: '0 0 30000 30000')
+      # unit is meter ;-)
+      # from one hex to the next there is 100m
+
+      #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
+      viewbox = [ 0, 0, 300 * 10, 300 * 10 ]
+
+      svg = maken(doc, :svg,
+        viewBox: viewbox.collect(&:to_s).join(' '),
+        preserveAspectRatio: 'xMinYMin slice',
+        xmlns: 'http://www.w3.org/2000/svg')
+        #width: '700px', height: '500px',
 
       maken(
         svg,
@@ -33,7 +39,7 @@ module Archelaus
           "L 0 #{DY + R1}" +
           "L 0 #{DY}" +
           "L #{R0} 0",
-        stroke: 'black', fill: 'none', 'stroke-width': 3,
+        stroke: 'black', fill: 'none', 'stroke-width': 1,
         transform: 'translate(0, 0)')
 
       3.times do |i|
