@@ -1,19 +1,48 @@
 
 module Archelaus
 
+  class Point
+
+    attr_reader :x, :y, :lat, :lon
+    attr_accessor :ele
+    attr_accessor :nw, :ne, :sw, :se, :w, :e
+
+    def initialize(x, y, lat, lon)
+
+      @x = x
+      @y = y
+      @lat = lat
+      @lon = lon
+    end
+
+    def [](i)
+
+      case i
+      when 0 then lat
+      when 1 then lon
+      else nil
+      end
+    end
+
+    def to_point_s
+
+      "#{lat.to_fixed5} #{lon.to_fixed5}"
+    end
+  end
+
   class << self
 
-    def compute_line(lat, lon, step, bearing, count)
+    def compute_line(y, lat, lon, step, bearing, count)
 
       lat1, lon1 = lat, lon
       bearings = Array(bearing)
 
-      [ [ lat, lon ] ] +
+      [ Archelaus::Point.new(0, y, lat, lon) ] +
       (count - 1).times
-        .collect { |i|
+        .collect { |x|
           lat1, lon1 =
-            compute_point(lat1, lon1, bearings[i % bearings.length], step)
-          [ lat1, lon1 ] }
+            compute_point(lat1, lon1, bearings[x % bearings.length], step)
+          Archelaus::Point.new(x + 1, y, lat1, lon1) }
     end
 
     def compute_grid(lat, lon, step, width, height, origin=:nw)
@@ -26,9 +55,10 @@ module Archelaus
         else           [ [ 150.0, 210.0 ],                  90.0 ] # nw
         end
 
-      g = compute_line(lat, lon, step, col_angles, height)
-        .collect { |lat0, lon0|
-          compute_line(lat0, lon0, step, row_angles, width) }
+      g = compute_line(-1, lat, lon, step, col_angles, height)
+        .each_with_index
+        .collect { |p0, y|
+          compute_line(y, p0.lat, p0.lon, step, row_angles, width) }
 
 #p [ g[0][0], g[-1][0] ]
       g.reverse! if g[0][0][0] < g[-1][0][0]
