@@ -3,17 +3,18 @@ module Archelaus
 
   class Point
 
-    attr_reader :x, :y, :lat, :lon
-    attr_accessor :ele
+    attr_reader :lat, :lon
+    attr_accessor :x, :y, :ele
     attr_accessor :nw, :ne, :sw, :se, :w, :e
 
-    def initialize(x, y, lat, lon)
+    def initialize(lat, lon)
 
-      @x = x
-      @y = y
       @lat = lat
       @lon = lon
     end
+
+    def xy=(xy); @x, @y = xy; end
+    def xy; [ x, y ]; end
 
     def [](i)
 
@@ -24,10 +25,7 @@ module Archelaus
       end
     end
 
-    def to_point_s
-
-      "#{lat.to_fixed5} #{lon.to_fixed5}"
-    end
+    def to_point_s; "#{lat.to_fixed5} #{lon.to_fixed5}"; end
   end
 
   class << self
@@ -37,12 +35,12 @@ module Archelaus
       lat1, lon1 = lat, lon
       bearings = Array(bearing)
 
-      [ Archelaus::Point.new(0, y, lat, lon) ] +
+      [ Archelaus::Point.new(lat, lon) ] +
       (count - 1).times
         .collect { |x|
           lat1, lon1 =
             compute_point(lat1, lon1, bearings[x % bearings.length], step)
-          Archelaus::Point.new(x + 1, y, lat1, lon1) }
+          Archelaus::Point.new(lat1, lon1) }
     end
 
     def compute_grid(lat, lon, step, width, height, origin=:nw)
@@ -64,6 +62,8 @@ module Archelaus
       g.reverse! if g[0][0][0] < g[-1][0][0]
 #p [ g[0][0], g[0][-1] ]
       g.each { |r| r.reverse! } if g[0][0][1] > g[0][-1][1]
+
+      g.each_with_index { |r, y| r.each_with_index { |p, x| p.xy= [ x, y ] } }
 
       g
     end
