@@ -16,8 +16,9 @@ describe Archelaus do
 
       g = Archelaus.compute_grid(54.41849, -0.88931, 100, 300, 300)
 
-      expect(g.length).to eq(300)
-      expect(g.all? { |r| r.length == 300 }).to eq(true)
+      expect(g.height).to eq(300)
+      expect(g.width).to eq(300)
+      expect(g.rows.all? { |r| r.length == 300 }).to eq(true)
 
 #puts g[0][0].to_point_s # NW
 #puts g[-1][-1].to_point_s # SE
@@ -36,8 +37,9 @@ describe Archelaus do
 
       g = Archelaus.compute_grid(54.41849, -0.88931, 100, 300, 300, :nw)
 
-      expect(g.length).to eq(300)
-      expect(g.all? { |r| r.length == 300 }).to eq(true)
+      expect(g.height).to eq(300)
+      expect(g.width).to eq(300)
+      expect(g.rows.all? { |r| r.length == 300 }).to eq(true)
 
 #puts g[0][0].to_point_s # NW
 #puts g[-1][-1].to_point_s # SE
@@ -56,8 +58,9 @@ describe Archelaus do
 
       g = Archelaus.compute_grid(54.41849, -0.88931, 100, 300, 300, :ne)
 
-      expect(g.length).to eq(300)
-      expect(g.all? { |r| r.length == 300 }).to eq(true)
+      expect(g.height).to eq(300)
+      expect(g.width).to eq(300)
+      expect(g.rows.all? { |r| r.length == 300 }).to eq(true)
 
 #puts g[0][0].to_point_s # NW
 #puts g[-1][-1].to_point_s # SE

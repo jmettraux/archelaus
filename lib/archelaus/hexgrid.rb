@@ -28,6 +28,36 @@ module Archelaus
     def to_point_s; "#{lat.to_fixed5} #{lon.to_fixed5}"; end
   end
 
+  class Grid
+
+    attr_reader :rows
+
+    def initialize(rows)
+
+      rows.reverse! if rows[0][0].lat < rows[-1][0].lat
+      rows.each { |r| r.reverse! } if rows[0][0].lon > rows[0][-1].lon
+
+      rows.each_with_index { |r, y|
+        r.each_with_index { |p, x|
+          p.xy = [ x, y ] } }
+
+      @rows = rows
+    end
+
+    def [](x, y=nil)
+
+      case y
+      when nil then @rows[x] # ;-)
+      when Integer then @rows[y][x]
+      when Float then locate(x, y)
+      else fail ArgumentError.new("cannot lookup #{x.inspect} #{y.inspect}")
+      end
+    end
+
+    def height; rows.length; end
+    def width; rows.first.length; end
+  end
+
   class << self
 
     def compute_line(y, lat, lon, step, bearing, count)
@@ -53,19 +83,11 @@ module Archelaus
         else           [ [ 150.0, 210.0 ],                  90.0 ] # nw
         end
 
-      g = compute_line(-1, lat, lon, step, col_angles, height)
-        .each_with_index
-        .collect { |p0, y|
-          compute_line(y, p0.lat, p0.lon, step, row_angles, width) }
-
-#p [ g[0][0], g[-1][0] ]
-      g.reverse! if g[0][0][0] < g[-1][0][0]
-#p [ g[0][0], g[0][-1] ]
-      g.each { |r| r.reverse! } if g[0][0][1] > g[0][-1][1]
-
-      g.each_with_index { |r, y| r.each_with_index { |p, x| p.xy= [ x, y ] } }
-
-      g
+      Archelaus::Grid.new(
+        compute_line(-1, lat, lon, step, col_angles, height)
+          .each_with_index
+          .collect { |p0, y|
+            compute_line(y, p0.lat, p0.lon, step, row_angles, width) })
     end
   end
 end
