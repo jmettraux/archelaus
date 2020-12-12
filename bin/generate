@@ -13,11 +13,9 @@ fail ArgumentError.new(
 
 lat, lon = ARGV.shift.to_f, ARGV.shift.to_f
 
-  # bin/fetch NE 54.41845 -0.23099
-  #
-grid = Archelaus.compute_grid(
+puts Archelaus.generate_svg(
   lat, lon,
   100, 300, 300, corner.downcase.to_sym)
-
-Archelaus.get_elevations(grid)
+    #
+    # bin/generate NE 54.41845 -0.23099
 

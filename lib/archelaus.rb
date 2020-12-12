@@ -3,6 +3,8 @@ require 'cgi'
 require 'json'
 require 'net/http'
 
+require 'ox'
+
 require 'additions'
 
 
@@ -77,6 +79,7 @@ module Archelaus
   end
 end
 
+require 'archelaus/svg'
 require 'archelaus/http'
 require 'archelaus/hexgrid'
 require 'archelaus/overpass'
