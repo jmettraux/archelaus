@@ -15,6 +15,17 @@ module Archelaus
       g.load_elevations
 
       doc = Ox::Document.new
+      html = maken(doc, :html)
+      head = maken(html, :head)
+      maken(head, :title, 'archelaus')
+
+      #maken(head, :style, %{ TODO RESET
+
+      maken(head, :style, %{
+body { margin: 0; padding: 0; }
+      })
+
+      body = maken(html, :body)
 
       # unit is meter ;-)
       # from one hex to the next there is 100m
@@ -23,7 +34,7 @@ module Archelaus
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
       viewbox = [ 0, 0, 300, 300 ]
 
-      svg = maken(doc, :svg,
+      svg = maken(body, :svg,
         viewBox: viewbox.collect(&:to_s).join(' '),
         preserveAspectRatio: 'xMinYMin slice',
         xmlns: 'http://www.w3.org/2000/svg')
@@ -83,10 +94,17 @@ module Archelaus
 
     protected
 
-    def maken(parent, tag, atts)
+    def maken(parent, tag, text=nil, atts={})
+
+      if text.is_a?(Hash)
+        atts = text
+        text = nil
+      end
 
       e = Ox::Element.new(tag.to_s)
       atts.each { |k, v| e[k] = v }
+      e << text if text
+
       parent << e
 
       e
