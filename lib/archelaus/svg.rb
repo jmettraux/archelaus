@@ -61,7 +61,7 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
       d = s.times
         .collect { |i|
           dy = 0.88 * DY
-          "M #{(i == 0 ? 0.87 : 0.74) * R0} #{-dy + i * R1 / s}" +
+          "M #{(i == 0 ? 0.87 : 0.66) * R0} #{-dy + i * R1 / s}" +
           " L #{R0} #{-dy + i * R1 / s}" }
         .join(' ')
 
