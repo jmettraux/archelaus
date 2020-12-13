@@ -118,7 +118,7 @@ describe Archelaus::Grid do
     @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 100, 100, :se)
   end
 
-  describe :[] do
+  describe '#[]' do
 
     it 'accepts (y)' do
 
@@ -128,12 +128,83 @@ describe Archelaus::Grid do
     it 'accepts (x, y)' do
 
       expect(@grid[1, 2]).to eq(@grid.rows[2][1])
+      expect(@grid[50, 51]).to eq(@grid.rows[51][50])
     end
 
     it 'accepts (lat, lon)' do
 
-p @grid[49, 51]
       expect(@grid[54.223211, -0.506348]).to eq(@grid[49, 51])
+    end
+  end
+
+  describe '#rows' do
+
+    it 'returns the row array' do
+
+      r = @grid.rows
+
+      expect(r.class).to eq(Array)
+      expect(r.count).to eq(100)
+      expect(r.first.count).to eq(100)
+      expect(r[0].collect(&:class).uniq).to eq([ Archelaus::Point ])
+      expect(r[-1].collect(&:class).uniq).to eq([ Archelaus::Point ])
+    end
+  end
+end
+
+describe Archelaus::Point do
+
+  before :all do
+
+    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 100, 100, :se)
+    @point = @grid[49, 51]
+  end
+
+  describe '#nw' do
+
+    it 'returns the NW adjacent point' do
+
+      expect(@point.nw).to eq(@grid[0, 0])
+    end
+  end
+
+  describe '#ne' do
+
+    it 'returns the NE adjacent point' do
+
+      expect(@point.ne).to eq(@grid[0, 0])
+    end
+  end
+
+  describe '#sw' do
+
+    it 'returns the SW adjacent point' do
+
+      expect(@point.sw).to eq(@grid[0, 0])
+    end
+  end
+
+  describe '#se' do
+
+    it 'returns the SE adjacent point' do
+
+      expect(@point.se).to eq(@grid[0, 0])
+    end
+  end
+
+  describe '#w' do
+
+    it 'returns the W adjacent point' do
+
+      expect(@point.w).to eq(@grid[50, 51])
+    end
+  end
+
+  describe '#e' do
+
+    it 'returns the E adjacent point' do
+
+      expect(@point.e).to eq(@grid[48, 51])
     end
   end
 end

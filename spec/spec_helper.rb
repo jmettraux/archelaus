@@ -45,3 +45,9 @@ RSpec::Matchers.define :lleq do |expected|
   end
 end
 
+#Signal.trap("SIGTERM") do
+#  puts "=" * 80
+#  p caller
+#  puts "=" * 80
+#end
+

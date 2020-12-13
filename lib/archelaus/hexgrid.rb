@@ -4,8 +4,8 @@ module Archelaus
   class Point
 
     attr_reader :lat, :lon
+    attr_accessor :grid
     attr_accessor :x, :y, :ele
-    attr_accessor :nw, :ne, :sw, :se, :w, :e
 
     def initialize(lat, lon)
 
@@ -28,6 +28,11 @@ module Archelaus
     end
 
     def to_point_s; "#{lat.to_fixed5} #{lon.to_fixed5}"; end
+
+    def row; @grid.rows[@y]; end
+
+    #def w; row[@x - 1]; end
+    #def e; row[@x + 1]; end
   end
 
   def extreme_point(relative_point)
@@ -46,9 +51,10 @@ module Archelaus
       rows.reverse! if rows[0][0].lat < rows[-1][0].lat
       rows.each { |r| r.reverse! } if rows[0][0].lon > rows[0][-1].lon
 
-      rows.each_with_index { |r, y|
-        r.each_with_index { |p, x|
-          p.xy = [ x, y ] } }
+      rows.each_with_index { |row, y|
+        row.each_with_index { |point, x|
+          point.grid = self
+          point.xy = [ x, y ] } }
 
       @rows = rows
     end
@@ -63,8 +69,8 @@ module Archelaus
       end
     end
 
-    def height; rows.length; end
-    def width; rows.first.length; end
+    def height; @rows.length; end
+    def width; @rows.first.length; end
 
     def locate(lat, lon)
 
