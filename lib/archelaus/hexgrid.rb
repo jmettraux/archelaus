@@ -57,8 +57,8 @@ module Archelaus
 
       p0, p1, p2 =
         dir == :nw || dir == :ne ?
-        @grid.rows[@y - 1][@x - 1, 3 ] :
-        @grid.rows[@y + 1][@x - 1, 3 ]
+        (@grid.rows[@y - 1] || [])[@x - 1, 3] :
+        (@grid.rows[@y + 1] || [])[@x - 1, 3]
 #puts "---"
 #p [ :X, self ]
 #p [ 0, p0, :d, self.lon - p0.lon ]

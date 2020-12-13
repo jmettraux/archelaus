@@ -28,7 +28,7 @@ body { margin: 0; padding: 0; }
 svg text.t {
   color: grey;
   font-size: 40; font-family: sans-serif; font-weight: bolder;
-  text-anchor: middle; opacity: 0.1; }
+  text-anchor: middle; opacity: 0.05; }
 use[href="#h"].g { fill: none; stroke: lightgrey; stroke-width: 1 }
 use[href="#h"].s { fill: lightblue; stroke: blue; stroke-width: 1 }
 path.sl { fill: none; stroke: black; stroke-width: 1 }
@@ -44,10 +44,11 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
       viewbox = [ 0, 0, 4000, 4000 ]
 
       svg = maken(body, :svg,
+        id: 'svg-map',
         viewBox: viewbox.collect(&:to_s).join(' '),
         preserveAspectRatio: 'xMinYMin slice',
-        xmlns: 'http://www.w3.org/2000/svg')
-        #width: '700px', height: '500px',
+        xmlns: 'http://www.w3.org/2000/svg',
+        width: '100%', height: '100%')
 
       maken(svg, :path,
         id: 'h',
@@ -97,9 +98,9 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
       #  href: '#slp', stroke: 'black', x: 0, y: 0,
       #  transform: "rotate(50, 50, 10)")
 
-      g.rows[0, 31].each do |row|
+      g.rows[0, 100].each do |row|
 
-        row[0, 299].each do |point|
+        row[0, 200].each do |point|
 
           loff = loffs[point.y % 2]
           cla = point.ele == nil ? 's' : 'g'
@@ -149,6 +150,37 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
           end
         end
       end
+
+      maken(body, :script) << Ox::Raw.new(%{
+var clog = console.log;
+var inc = 1000;
+
+document.body.addEventListener('keyup', function(ev) {
+
+  //clog(ev.keyCode);
+  // "h" 72
+  // "l" 76
+
+  var map = document.getElementById('svg-map');
+  var vb = map.getAttribute('viewBox');
+
+  var m = vb.match(/(-?[0-9]+) (-?[0-9]+) (-?[0-9]+) (-?[0-9]+)/);
+  var x = parseInt(m[1], 10);
+  var y = parseInt(m[2], 10);
+  var w = parseInt(m[3], 10);
+  var h = parseInt(m[4], 10);
+
+  if (ev.keyCode === 72) { x = x - inc; }
+  else if (ev.keyCode === 74) { y = y + inc; }
+  else if (ev.keyCode === 75) { y = y - inc; }
+  else if (ev.keyCode === 76) { x = x + inc; }
+  else if (ev.keyCode === 78) { w = w + inc; h = h + inc; }
+  else if (ev.keyCode === 77) { w = w - inc; h = h - inc; }
+  else { clog(ev.keyCode); return; }
+
+  map.setAttribute('viewBox', '' + x + ' ' + y + ' ' + w + ' ' + h);
+});
+      })
 
       Ox.dump(doc)
     end
