@@ -41,7 +41,7 @@ body { margin: 0; padding: 0; }
         #width: '700px', height: '500px',
 
       maken(svg, :path,
-        id: 'hex',
+        id: 'h',
         d:
           "M 0 #{-R1}" +
           " L #{R0} #{-DY}" +
@@ -52,15 +52,17 @@ body { margin: 0; padding: 0; }
           " L 0 #{-R1}",
         fill: 'none', 'stroke-width': 1)
 
-      #s = 8
-      #d = s.times
-      #  .collect { |i|
-      #    i = i + 0.5
-      #    "M 0 #{DY + i * R1 / s} L #{0.2 * R0} #{DY + i * R1 / s}" }
-      #  .join(' ')
+      s = 8
+      d = s.times
+        .collect { |i|
+          dy = 0.88 * DY
+          "M #{0.8 * R0} #{-dy + i * R1 / s} L #{R0} #{-dy + i * R1 / s}" }
+        .join(' ')
 
-      #maken(svg, :path,
-      #  id: 'slp', d: d, fill: 'none', 'stroke-width': 1)
+      maken(svg, :path,
+        id: 's', d: d, fill: 'none', 'stroke-width': 1)
+      maken(svg, :path,
+        id: 's1', d: d, fill: 'none', 'stroke-width': 1, transform: 'rotate(60)')
 
       loffs = [ 0, R0 ]
       loffs.reverse! if g[0][0].lon < g[1][0].lon
@@ -77,15 +79,24 @@ body { margin: 0; padding: 0; }
       #  href: '#slp', stroke: 'black', x: 0, y: 0,
       #  transform: "rotate(50, 50, 10)")
 
-      g.rows[0, 3].each do |row|
-        row[0, 3].each do |point|
+      g.rows[0, 2].each do |row|
+        row[0, 2].each do |point|
           loff = loffs[point.y % 2]
           color = point.ele == nil ? 'blue' : 'black'
           maken(svg, :use,
-            href: '#hex',
+            href: '#h',
             #id: point.id,
             stroke: color,
             x: loff + point.x * 100, y: point.y * 1.5 * R1)
+
+          maken(svg, :use,
+            href: '#s', stroke: 'black',
+            x: loff + point.x * 100, y: point.y * 1.5 * R1
+              ) if point.xy == [ 0, 1 ]
+          maken(svg, :use,
+            href: '#s1', stroke: 'black',
+            x: loff + point.x * 100, y: point.y * 1.5 * R1,
+              ) if point.xy == [ 1, 1 ]
         end
       end
 
