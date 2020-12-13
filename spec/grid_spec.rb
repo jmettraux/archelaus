@@ -115,7 +115,7 @@ describe Archelaus::Grid do
 
   before :all do
 
-    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 100, 100, :se)
+    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 10, 10, :se)
   end
 
   describe '#[]' do
@@ -125,15 +125,32 @@ describe Archelaus::Grid do
       expect(@grid[1]).to eq(@grid.rows[1])
     end
 
+    it 'accepts (y) (out)' do
+
+      expect(@grid[99]).to eq(nil)
+    end
+
     it 'accepts (x, y)' do
 
       expect(@grid[1, 2]).to eq(@grid.rows[2][1])
-      expect(@grid[50, 51]).to eq(@grid.rows[51][50])
+      expect(@grid[5, 6]).to eq(@grid.rows[6][5])
+    end
+
+    it 'accepts (x, y) (out)' do
+
+      expect(@grid[99, 99]).to eq(nil)
+      expect(@grid[99, 1]).to eq(nil)
     end
 
     it 'accepts (lat, lon)' do
 
-      expect(@grid[54.223211, -0.506348]).to eq(@grid[49, 51])
+      expect(@grid[54.188203, -0.43489]).to eq(@grid[5, 6])
+    end
+
+    it 'accepts (lat, lon) (out)' do
+
+      expect(@grid[100.188203, -0.43489]).to eq(nil)
+      expect(@grid[54.188203, -100.0]).to eq(nil)
     end
   end
 
@@ -144,8 +161,8 @@ describe Archelaus::Grid do
       r = @grid.rows
 
       expect(r.class).to eq(Array)
-      expect(r.count).to eq(100)
-      expect(r.first.count).to eq(100)
+      expect(r.count).to eq(10)
+      expect(r.first.count).to eq(10)
       expect(r[0].collect(&:class).uniq).to eq([ Archelaus::Point ])
       expect(r[-1].collect(&:class).uniq).to eq([ Archelaus::Point ])
     end
@@ -156,19 +173,43 @@ describe Archelaus::Point do
 
   before :all do
 
-    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 100, 100, :se)
-    @point = @grid[49, 51]
+    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 10, 10, :se)
+    @point = @grid[4, 6]
+  end
+
+  describe '#x' do
+
+    it "returns the point's x" do
+
+      expect(@point.x).to eq(4)
+    end
+  end
+
+  describe '#x' do
+
+    it "returns the point's y" do
+
+      expect(@point.y).to eq(6)
+    end
+  end
+
+  describe '#xy' do
+
+    it "returns the point's x and y" do
+
+      expect(@point.xy).to eq([ 4, 6 ])
+    end
   end
 
   describe '#row' do
 
     it 'returns the row to which the point belongs' do
 
-      expect(@point.row).to eq(@grid.rows[51])
+      expect(@point.row).to eq(@grid.rows[6])
       expect(@point.row.class).to eq(Array)
-      expect(@point.row).to eq(@point.grid.rows[51])
-      expect(@point.row[49]).to eq(@point)
-      expect(@point.row[49].class).to eq(Archelaus::Point)
+      expect(@point.row).to eq(@point.grid.rows[6])
+      expect(@point.row[4]).to eq(@point)
+      expect(@point.row[4].class).to eq(Archelaus::Point)
     end
   end
 
@@ -176,6 +217,7 @@ describe Archelaus::Point do
 
     it 'returns the NW adjacent point' do
 
+      #expect(@point.row[@point.x]).to eq(@grid[0, 0])
       expect(@point.nw).to eq(@grid[0, 0])
     end
   end
@@ -208,7 +250,7 @@ describe Archelaus::Point do
 
     it 'returns the W adjacent point' do
 
-      expect(@point.w).to eq(@grid[50, 51])
+      expect(@point.w).to eq(@grid[4 - 1, 6])
     end
   end
 
@@ -216,7 +258,7 @@ describe Archelaus::Point do
 
     it 'returns the E adjacent point' do
 
-      expect(@point.e).to eq(@grid[48, 51])
+      expect(@point.e).to eq(@grid[4 + 1, 6])
     end
   end
 end
