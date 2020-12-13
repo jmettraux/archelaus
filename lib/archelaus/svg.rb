@@ -25,9 +25,12 @@ module Archelaus
 
       maken(head, :style, %{
 body { margin: 0; padding: 0; }
-svg text.t { font-size: 21; text-anchor: middle; }
-use[href="#h"].g { fill: none; stroke: black; stroke-width: 1 }
-use[href="#h"].s { fill: blue; stroke: blue; stroke-width: 1 }
+svg text.t {
+  color: grey;
+  font-size: 40; font-family: sans-serif; font-weight: bolder;
+  text-anchor: middle; opacity: 0.1; }
+use[href="#h"].g { fill: none; stroke: lightgrey; stroke-width: 1 }
+use[href="#h"].s { fill: lightblue; stroke: blue; stroke-width: 1 }
 path.sl { fill: none; stroke: black; stroke-width: 1 }
       })
 
@@ -55,7 +58,8 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
           " L 0 #{R1}" +
           " L #{-R0} #{DY}" +
           " L #{-R0} #{-DY}" +
-          " L 0 #{-R1}")
+          " L 0 #{-R1}",
+        fill: 'none')
 
       s = 6
       d = s.times
@@ -77,7 +81,7 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
 
       g.rows.each do |row|
         row.each do |point|
-          point.el = point.ele ? (point.ele / 10).to_i : 0
+          point.el = point.ele ? (point.ele / 10).round : 0
         end
       end
 
@@ -107,33 +111,42 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
           eel = point.e ? point.e.el : 0
           maken(svg, :use,
             href: '#s0',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > eel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < eel
           seel = point.se ? point.se.el : 0
           maken(svg, :use,
             href: '#s1',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > seel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < seel
           swel = point.sw ? point.sw.el : 0
           maken(svg, :use,
             href: '#s2',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > swel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < swel
           wel = point.w ? point.w.el : 0
           maken(svg, :use,
             href: '#s3',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > wel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < wel
           nwel = point.nw ? point.nw.el : 0
           maken(svg, :use,
             href: '#s4',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > nwel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < nwel
           neel = point.ne ? point.ne.el : 0
           maken(svg, :use,
             href: '#s5',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > neel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < neel
 
-          #if point.ele
-          #  maken(svg, :text, point.ele.to_i.to_s + 'm',
-          #    class: 't',
-          #    x: loff + point.x * 100, y: point.y * 1.5 * R1)
-          #end
+
+          if point.ele
+            #eles = [ eel, seel, swel, wel, nwel, neel, point.el ]
+            #if (
+            #  #eles.count { |e| e == point.el } == 1 &&
+            #  (eles.min == point.el || eles.max == point.el)
+            #) then
+            maken(svg, :text,
+              point.ele.to_i.to_s, #+ 'm',
+              #point.el.to_s,
+              class: 't',
+              x: loff + point.x * 100, y: point.y * 1.5 * R1 + R0 / 4)
+            #end
+          end
         end
       end
 
