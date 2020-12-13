@@ -65,6 +65,8 @@ module Archelaus
 #p [ 1, p1, :d, self.lon - p1.lon ]
 #p [ 2, p2, :d, self.lon - p2.lon ]
 
+      return nil unless p1
+
       if self.lon <= p1.lon
         dir == :nw || dir == :sw ? p0 : p1
       else
