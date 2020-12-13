@@ -160,6 +160,18 @@ describe Archelaus::Point do
     @point = @grid[49, 51]
   end
 
+  describe '#row' do
+
+    it 'returns the row to which the point belongs' do
+
+      expect(@point.row).to eq(@grid.rows[51])
+      expect(@point.row.class).to eq(Array)
+      expect(@point.row).to eq(@point.grid.rows[51])
+      expect(@point.row[49]).to eq(@point)
+      expect(@point.row[49].class).to eq(Archelaus::Point)
+    end
+  end
+
   describe '#nw' do
 
     it 'returns the NW adjacent point' do
