@@ -1,6 +1,10 @@
 
 class Float
 
+  def sign
+    zero? ? 0 : negative? ? -1 : 1
+  end
+
   def to_rad
     to_f / 180.0 * Math::PI
   end

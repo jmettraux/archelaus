@@ -111,3 +111,30 @@ describe Archelaus do
   end
 end
 
+describe Archelaus::Grid do
+
+  before :all do
+
+    @grid = Archelaus.compute_grid(54.18587, -0.42952, 100, 100, 100, :se)
+  end
+
+  describe :[] do
+
+    it 'accepts (y)' do
+
+      expect(@grid[1]).to eq(@grid.rows[1])
+    end
+
+    it 'accepts (x, y)' do
+
+      expect(@grid[1, 2]).to eq(@grid.rows[2][1])
+    end
+
+    it 'accepts (lat, lon)' do
+
+p @grid[49, 51]
+      expect(@grid[54.223211, -0.506348]).to eq(@grid[49, 51])
+    end
+  end
+end
+
