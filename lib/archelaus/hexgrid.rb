@@ -25,6 +25,47 @@ module Archelaus
 
     def w; row[@x - 1]; end
     def e; row[@x + 1]; end
+
+    def inspect
+
+      "<Archelaus::Point" +
+      " lat=#{@lat.inspect} lon=#{@lon.inspect}" +
+      " x=#{@x.inspect} y=#{@y.inspect}" +
+      " ele=#{@ele.inspect}" +
+      " grid=#{@grid ? @grid.dim : @grid.inspect}" +
+      ">"
+    end
+
+    def nw; @nw ||= adj(:nw); end
+    def ne; @ne ||= adj(:ne); end
+    def sw; @sw ||= adj(:sw); end
+    def se; @se ||= adj(:se); end
+
+    protected
+
+    def adj(dir)
+
+      p0, p1, p2 =
+        dir == :nw || dir == :ne ?
+        @grid.rows[@y - 1][@x - 1, 3 ] :
+        @grid.rows[@y + 1][@x - 1, 3 ]
+#p [ :X, self ]
+#p self.to_point_s
+#puts "..."
+#p p0.to_point_s
+#p p1.to_point_s
+#p p2.to_point_s
+#puts "---"
+#p [ 0, p0, :d, self.lon - p0.lon ]
+#p [ 1, p1, :d, self.lon - p1.lon ]
+#p [ 2, p2, :d, self.lon - p2.lon ]
+
+      if self.lon <= p0.lon
+        dir == :nw || dir == :sw ? p0 : p1
+      else
+        dir == :nw || dir == :sw ? p1 : p2
+      end
+    end
   end
 
   class Grid
@@ -56,6 +97,7 @@ module Archelaus
 
     def height; @rows.length; end
     def width; @rows.first.length; end
+    def dim; "#{width}x#{height}"; end
 
     def locate(lat, lon)
 
@@ -90,14 +132,28 @@ module Archelaus
       nil
     end
 
-#    protected
-#
-#    def extreme_point(relative_point)
-#
-#      Archelaus::Point.new(
-#        relative_point.lat.negative? ? -9999.0 : 9999.0,
-#        relative_point.lon.negative? ? -9999.0 : 9999.0)
-#    end
+    def to_s
+
+      w = @rows[0][0].to_point_s.length
+
+      s = StringIO.new
+
+      @rows.each_with_index do |row, y|
+        r0 = nil
+        r1 = nil
+        r2 = nil
+        row.each_with_index do |point, x|
+          r0 = [ r0, point.to_point_s ].compact.join(' | ')
+          r1 = [ r1, "%#{w}s" % "#{point.x},#{point.y}" ].compact.join(' | ')
+        end
+        a = (y % 2) == 1 ? '        | ' : '| '
+        s << a + r0 + "\n"
+        s << a + r1 + "\n"
+        s << "\n"
+      end
+
+      s.string
+    end
   end
 
   class << self
