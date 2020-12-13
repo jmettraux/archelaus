@@ -32,47 +32,51 @@ module Archelaus
       maken(svg, :path,
         id: 'hex',
         d:
-          "M #{R0} 0 " +
-          "L #{2 * R0} #{DY} " +
-          "L #{2 * R0} #{DY + R1}" +
-          "L #{R0} #{2 * R1}" +
-          "L 0 #{DY + R1}" +
-          "L 0 #{DY}" +
-          "L #{R0} 0",
+          "M 0 #{-R1}" +
+          " L #{R0} #{-DY}" +
+          " L #{R0} #{DY}" +
+          " L 0 #{R1}" +
+          " L #{-R0} #{DY}" +
+          " L #{-R0} #{-DY}" +
+          " L 0 #{-R1}",
         fill: 'none', 'stroke-width': 1)
 
-      s = 8
-      d = s.times
-        .collect { |i|
-          i = i + 0.5
-          "M 0 #{DY + i * R1 / s} L #{0.2 * R0} #{DY + i * R1 / s}" }
-        .join(' ')
+      #s = 8
+      #d = s.times
+      #  .collect { |i|
+      #    i = i + 0.5
+      #    "M 0 #{DY + i * R1 / s} L #{0.2 * R0} #{DY + i * R1 / s}" }
+      #  .join(' ')
 
-      maken(svg, :path,
-        id: 'slp', d: d, fill: 'none', 'stroke-width': 1)
+      #maken(svg, :path,
+      #  id: 'slp', d: d, fill: 'none', 'stroke-width': 1)
 
       loffs = [ 0, R0 ]
       loffs.reverse! if g[0][0].lon < g[1][0].lon
 
 #p g[0, 0]
 #p g.elevations
-      maken(svg, :use, href: '#hex', stroke: 'black', x: R0, y: R0)
+      #maken(svg, :use, href: '#hex', stroke: 'black', x: 0, y: 0)
+      #maken(svg, :use, href: '#hex', stroke: 'black', x: R0, y: R0)
+      #maken(
+      #  svg, :use,
+      #  href: '#slp', stroke: 'black', x: R0, y: R0)
+      #maken(
+      #  svg, :use,
+      #  href: '#slp', stroke: 'black', x: 0, y: 0,
+      #  transform: "rotate(50, 50, 10)")
 
-      maken(
-        svg, :use,
-        href: '#slp', stroke: 'black', x: R0, y: R0)
-
-      #g.rows.each do |row|
-      #  row.each do |point|
-      #    loff = loffs[point.y % 2]
-      #    color = point.ele == nil ? 'blue' : 'black'
-      #    maken(svg, :use,
-      #      href: '#hex',
-      #      #id: point.id,
-      #      stroke: color,
-      #      x: loff + point.x * 100, y: point.y * 1.5 * R1)
-      #  end
-      #end
+      g.rows[0, 3].each do |row|
+        row[0, 3].each do |point|
+          loff = loffs[point.y % 2]
+          color = point.ele == nil ? 'blue' : 'black'
+          maken(svg, :use,
+            href: '#hex',
+            #id: point.id,
+            stroke: color,
+            x: loff + point.x * 100, y: point.y * 1.5 * R1)
+        end
+      end
 
       Ox.dump(doc)
     end
