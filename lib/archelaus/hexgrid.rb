@@ -14,6 +14,16 @@ module Archelaus
       @lon = lon
     end
 
+    def id; "x#{@x}y#{@y}"; end
+
+    def [](i)
+
+      case i
+      when 0 then @lat
+      else @lon
+      end
+    end
+
     def xy=(xy); @x, @y = xy; end
     def xy; [ @x, @y ]; end
 
@@ -150,6 +160,13 @@ module Archelaus
       end
 
       s.string
+    end
+
+    def elevations
+
+      eles = @rows.flatten.collect(&:ele).compact + [ 0.0 ]
+
+      [ eles.min, eles.max ]
     end
   end
 

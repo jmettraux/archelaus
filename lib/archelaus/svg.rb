@@ -12,6 +12,7 @@ module Archelaus
     def generate_svg(lat, lon, step, width, height, origin=:nw)
 
       g = compute_grid(lat, lon, step, width, height, origin)
+      g.load_elevations
 
       doc = Ox::Document.new
 
@@ -19,7 +20,7 @@ module Archelaus
       # from one hex to the next there is 100m
 
       #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
-      viewbox = [ 0, 0, 300 * 10, 300 * 10 ]
+      viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
 
       svg = maken(doc, :svg,
         viewBox: viewbox.collect(&:to_s).join(' '),
@@ -39,14 +40,24 @@ module Archelaus
           "L 0 #{DY + R1}" +
           "L 0 #{DY}" +
           "L #{R0} 0",
-        stroke: 'black', fill: 'none', 'stroke-width': 1,
+        fill: 'none', 'stroke-width': 1,
         transform: 'translate(0, 0)')
 
-      3.times do |i|
-        maken(svg, :use, href: '#hex', id: "h#{i}", x: i * 100)
-      end
-      3.times do |i|
-        maken(svg, :use, href: '#hex', id: "h#{i}", x: 50 + i * 100, y: 1.5 * R1)
+      loffs = [ 0, R0 ]
+      loffs.reverse! if g[0][0].lon < g[1][0].lon
+
+#p g[0, 0]
+#p g.elevations
+      g.rows.each do |row|
+        row.each do |point|
+          loff = loffs[point.y % 2]
+          color = point.ele == nil ? 'blue' : 'black'
+          maken(svg, :use,
+            href: '#hex',
+            #id: point.id,
+            stroke: color,
+            x: loff + point.x * 100, y: point.y * 1.5 * R1)
+        end
       end
 
       Ox.dump(doc)

@@ -75,5 +75,18 @@ module Archelaus
       "var/elevations/e__#{point[0].to_fixed5}__#{point[1].to_fixed5}.json"
     end
   end
+
+  class Grid
+
+    def load_elevations
+
+      @rows.each do |row|
+        row.each do |point|
+          d = Archelaus.send(:load_elevation, point) rescue {}
+          point.ele = d['ele']
+        end
+      end
+    end
+  end
 end
 
