@@ -218,11 +218,10 @@ describe Archelaus::Point do
 
     it 'returns the NW adjacent point' do
 
-puts @grid.to_s
       expect(@point.nw).to eq(@grid[4, 5])
 
       expect(@grid[3, 6].nw).to eq(@grid[3, 5])
-      expect(@grid[3, 7].nw).to eq(@grid[3, 6])
+      expect(@grid[3, 7].nw).to eq(@grid[2, 6])
     end
   end
 
@@ -231,6 +230,9 @@ puts @grid.to_s
     it 'returns the NE adjacent point' do
 
       expect(@point.ne).to eq(@grid[5, 5])
+
+      expect(@grid[3, 6].ne).to eq(@grid[4, 5])
+      expect(@grid[3, 7].ne).to eq(@grid[3, 6])
     end
   end
 
@@ -239,6 +241,9 @@ puts @grid.to_s
     it 'returns the SW adjacent point' do
 
       expect(@point.sw).to eq(@grid[4, 7])
+
+      expect(@grid[3, 6].sw).to eq(@grid[3, 7])
+      expect(@grid[3, 7].sw).to eq(@grid[2, 8])
     end
   end
 
@@ -246,7 +251,11 @@ puts @grid.to_s
 
     it 'returns the SE adjacent point' do
 
+#puts @grid.to_s
       expect(@point.se).to eq(@grid[5, 7])
+
+      expect(@grid[3, 6].se).to eq(@grid[4, 7])
+      expect(@grid[3, 7].se).to eq(@grid[3, 8])
     end
   end
 

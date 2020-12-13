@@ -49,18 +49,13 @@ module Archelaus
         dir == :nw || dir == :ne ?
         @grid.rows[@y - 1][@x - 1, 3 ] :
         @grid.rows[@y + 1][@x - 1, 3 ]
-#p [ :X, self ]
-#p self.to_point_s
-#puts "..."
-#p p0.to_point_s
-#p p1.to_point_s
-#p p2.to_point_s
 #puts "---"
+#p [ :X, self ]
 #p [ 0, p0, :d, self.lon - p0.lon ]
 #p [ 1, p1, :d, self.lon - p1.lon ]
 #p [ 2, p2, :d, self.lon - p2.lon ]
 
-      if self.lon <= p0.lon
+      if self.lon <= p1.lon
         dir == :nw || dir == :sw ? p0 : p1
       else
         dir == :nw || dir == :sw ? p1 : p2
@@ -135,6 +130,8 @@ module Archelaus
     def to_s
 
       w = @rows[0][0].to_point_s.length
+      as = [ '        | ', '| ' ]
+      as.reverse! if @rows[0][0].lon < @rows[1][0].lon
 
       s = StringIO.new
 
@@ -146,7 +143,7 @@ module Archelaus
           r0 = [ r0, point.to_point_s ].compact.join(' | ')
           r1 = [ r1, "%#{w}s" % "#{point.x},#{point.y}" ].compact.join(' | ')
         end
-        a = (y % 2) == 1 ? '        | ' : '| '
+        a = as[y % 2]
         s << a + r0 + "\n"
         s << a + r1 + "\n"
         s << "\n"
