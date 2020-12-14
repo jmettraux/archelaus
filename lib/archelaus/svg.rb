@@ -32,7 +32,7 @@ svg text.t {
   font-size: 21;
   color: grey; font-family: sans-serif; font-weight: bolder;
   text-anchor: middle;
-  opacity: 0.31; }
+  opacity: 0.21; }
 svg text.t.gx {
   color: lightgrey;
 }
@@ -52,8 +52,12 @@ use[href="#h"].g {
 use[href="#h"].s {
   fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
 
-path.sl {
-  fill: none; stroke: black; stroke-width: 1 }
+use[href="#s0"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#s1"] { fill: none; stroke-width: 1.2; stroke: black; }
+use[href="#s2"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#s3"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#s4"] { fill: none; stroke-width: 0.8; stroke: grey; }
+use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
 
 #patterns {
   display: none; }
@@ -118,11 +122,11 @@ path.sl {
         end
       end
 
-      g.rows[0, 100].each do |row|
-      #g.rows[0, 2].each do |row|
+      #g.rows.each do |row|
+      g.rows[0, 200].each do |row|
 
-        row[0, 200].each do |point|
-        #row[0, 2].each do |point|
+        #row.each do |point|
+        row[0, 180].each do |point|
 
           loff = loffs[point.y % 2]
 
