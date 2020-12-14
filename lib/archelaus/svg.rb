@@ -27,17 +27,34 @@ module Archelaus
 body {
   margin: 0;
   padding: 0; }
+
 svg text.t {
-  font-size: 12;
+  font-size: 21;
   color: grey; font-family: sans-serif; font-weight: bolder;
   text-anchor: middle;
-  opacity: 0.05; }
+  opacity: 0.31; }
+svg text.t.gx {
+  color: lightgrey;
+}
+svg text.t.gn {
+  font-size: 18;
+  color: lightgrey;
+}
+svg text.t.mx {
+}
+svg text.t.mn {
+  font-size: 18;
+  color: lightgrey;
+}
+
 use[href="#h"].g {
   fill: none; stroke: lightgrey; stroke-width: 1; }
 use[href="#h"].s {
   fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
+
 path.sl {
   fill: none; stroke: black; stroke-width: 1 }
+
 #patterns {
   display: none; }
       })
@@ -47,9 +64,9 @@ path.sl {
       # unit is meter ;-)
       # from one hex to the next there is 100m
 
-      viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
+      #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
-      #viewbox = [ 0, 0, 4000, 4000 ]
+      viewbox = [ 0, 0, 5000, 5000 ]
 
       svg = maken(body, :svg,
         id: 'svg-map',
@@ -159,17 +176,25 @@ path.sl {
             ledge = locals
               .select { |pt| pt.el == point.el }
 
-            #if (
-            #  ledge.all? { |pt| pt.elev < point.elev } ||
-            #  ledge.all? { |pt| pt.elev > point.elev } ||
-            #  (elevs.min == point.elev || elevs.max == point.elev)
-            #) then
-              maken(svg, :text,
-                #point.ele.to_i.to_s + 'm',
-                #point.el.to_s,
-                "#{point.ele.to_i} #{point.xy.join(',')}",
-                class: 't', x: px, y: py + R0 / 4)
-            #end
+            k =
+              if ledge.all? { |pt| pt.elev < point.elev }
+                't gx' # ledge max
+              elsif ledge.all? { |pt| pt.elev > point.elev }
+                't gn' # ledge min
+              elsif elevs.min == point.elev
+                't mn' # hole
+              elsif elevs.max == point.elev
+                't mx' # summit
+              else
+                nil
+              end
+
+            maken(svg, :text,
+              point.ele.to_i.to_s + 'm',
+              #point.el.to_s,
+              #"#{point.ele.to_i} #{point.xy.join(',')}",
+              class: k, x: px, y: py + R0 / 4
+                ) if k
           end
         end
       end
