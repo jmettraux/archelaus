@@ -63,14 +63,17 @@ module Archelaus
         t3(@grid.rows[@y - 1] || [], @x) :
         t3(@grid.rows[@y + 1] || [], @x)
 #puts "---"
+#p dir
 #p [ :X, self ]
 #p [ 0, p0, :d, p0 ? (self.lon - p0.lon) : nil ]
 #p [ 1, p1, :d, p1 ? (self.lon - p1.lon) : nil ]
 #p [ 2, p2, :d, p2 ? (self.lon - p2.lon) : nil ]
+#p p1 ? [ self.lon, p1.lon ] : :nop1
+#p p1 ? self.lon < p1.lon : :nop1
 
       return nil unless p1
 
-      if self.lon <= p1.lon
+      if self.lon < p1.lon
         dir == :nw || dir == :sw ? p0 : p1
       else
         dir == :nw || dir == :sw ? p1 : p2

@@ -47,9 +47,9 @@ path.sl {
       # unit is meter ;-)
       # from one hex to the next there is 100m
 
-      #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
+      viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
-      viewbox = [ 0, 0, 4000, 4000 ]
+      #viewbox = [ 0, 0, 4000, 4000 ]
 
       svg = maken(body, :svg,
         id: 'svg-map',
@@ -87,8 +87,12 @@ path.sl {
       maken(pats, :path, id: 's4', class: 'sl', d: d, transform: 'rotate(240)')
       maken(pats, :path, id: 's5', class: 'sl', d: d, transform: 'rotate(300)')
 
-      loffs = [ 0, R0 ]
-      loffs.reverse! if g[0][0].lon < g[1][0].lon
+      loffs =
+        g[0, 0].lon < g[0, 1].lon ?
+        [ 0, R0 ] :
+        [ R0, 0 ]
+#STDERR.puts g[0, 0].lon
+#STDERR.puts p g[0, 1].lon
 
       g.rows.each do |row|
         row.each do |point|
@@ -119,9 +123,9 @@ path.sl {
           wel = point.w ? point.w.el : -1
           nwel = point.nw ? point.nw.el : -1
           neel = point.ne ? point.ne.el : -1
-#STDERR.puts "---"
-#STDERR.puts point.inspect
-#if point.xy == [ 1, 1 ]
+#if point.xy == [ 106, 3 ]
+#  STDERR.puts "---"
+#  STDERR.puts point.inspect
 #  STDERR.puts [ :e, point.e ].inspect
 #  STDERR.puts [ :se, point.se ].inspect
 #  STDERR.puts [ :sw, point.sw ].inspect
