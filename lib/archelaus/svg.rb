@@ -28,8 +28,8 @@ body {
   margin: 0;
   padding: 0; }
 svg text.t {
-  color: grey;
-  font-size: 25; font-family: sans-serif; font-weight: bolder;
+  font-size: 12;
+  color: grey; font-family: sans-serif; font-weight: bolder;
   text-anchor: middle;
   opacity: 0.05; }
 use[href="#h"].g {
@@ -97,11 +97,11 @@ path.sl {
         end
       end
 
-      #g.rows[0, 100].each do |row|
-      g.rows[0, 2].each do |row|
+      g.rows[0, 100].each do |row|
+      #g.rows[0, 2].each do |row|
 
-        #row[0, 200].each do |point|
-        row[0, 2].each do |point|
+        row[0, 200].each do |point|
+        #row[0, 2].each do |point|
 
           loff = loffs[point.y % 2]
 
@@ -119,16 +119,16 @@ path.sl {
           wel = point.w ? point.w.el : -1
           nwel = point.nw ? point.nw.el : -1
           neel = point.ne ? point.ne.el : -1
-puts "---"
-p point
-if point.xy == [ 1, 1 ]
-  p [ :e, point.e ]
-  p [ :se, point.se ]
-  p [ :sw, point.sw ]
-  p [ :w, point.w ]
-  p [ :nw, point.nw ]
-  p [ :ne, point.ne ]
-end
+#STDERR.puts "---"
+#STDERR.puts point.inspect
+#if point.xy == [ 1, 1 ]
+#  STDERR.puts [ :e, point.e ].inspect
+#  STDERR.puts [ :se, point.se ].inspect
+#  STDERR.puts [ :sw, point.sw ].inspect
+#  STDERR.puts [ :w, point.w ].inspect
+#  STDERR.puts [ :nw, point.nw ].inspect
+#  STDERR.puts [ :ne, point.ne ].inspect
+#end
 
           maken(svg, :use, href: '#s0', x: px, y: py) if point.el > eel
           maken(svg, :use, href: '#s1', x: px, y: py) if point.el > seel
@@ -155,48 +155,71 @@ end
             ledge = locals
               .select { |pt| pt.el == point.el }
 
-            if (
-              ledge.all? { |pt| pt.elev < point.elev } ||
-              ledge.all? { |pt| pt.elev > point.elev } ||
-              (elevs.min == point.elev || elevs.max == point.elev)
-            ) then
+            #if (
+            #  ledge.all? { |pt| pt.elev < point.elev } ||
+            #  ledge.all? { |pt| pt.elev > point.elev } ||
+            #  (elevs.min == point.elev || elevs.max == point.elev)
+            #) then
               maken(svg, :text,
                 #point.ele.to_i.to_s + 'm',
-                point.el.to_s,
+                #point.el.to_s,
+                "#{point.ele.to_i} #{point.xy.join(',')}",
                 class: 't', x: px, y: py + R0 / 4)
-            end
+            #end
           end
         end
       end
 
       maken(body, :script) << Ox::Raw.new(%{
 var clog = console.log;
+
+var svg = document.getElementById('svg-map');
 var inc = 1000;
+
+function getViewBox() {
+
+  var vb = svg.getAttribute('viewBox');
+  var m = vb.match(/(-?[0-9]+) (-?[0-9]+) (-?[0-9]+) (-?[0-9]+)/);
+
+  return {
+    x: parseInt(m[1], 10), y: parseInt(m[2], 10),
+    w: parseInt(m[3], 10), h: parseInt(m[4], 10) }
+};
 
 document.body.addEventListener('keyup', function(ev) {
 
-  //clog(ev.keyCode);
-  // "h" 72
-  // "l" 76
+  var vb = getViewBox();
 
-  var map = document.getElementById('svg-map');
-  var vb = map.getAttribute('viewBox');
-
-  var m = vb.match(/(-?[0-9]+) (-?[0-9]+) (-?[0-9]+) (-?[0-9]+)/);
-  var x = parseInt(m[1], 10);
-  var y = parseInt(m[2], 10);
-  var w = parseInt(m[3], 10);
-  var h = parseInt(m[4], 10);
-
-  if (ev.keyCode === 72) { x = x - inc; }
-  else if (ev.keyCode === 74) { y = y + inc; }
-  else if (ev.keyCode === 75) { y = y - inc; }
-  else if (ev.keyCode === 76) { x = x + inc; }
-  else if (ev.keyCode === 78) { w = w + inc; h = h + inc; }
-  else if (ev.keyCode === 77) { w = w - inc; h = h - inc; }
+       if (ev.keyCode === 72) { vb.x = vb.x - inc; }
+  else if (ev.keyCode === 74) { vb.y = vb.y + inc; }
+  else if (ev.keyCode === 75) { vb.y = vb.y - inc; }
+  else if (ev.keyCode === 76) { vb.x = vb.x + inc; }
+  else if (ev.keyCode === 78) { vb.w = vb.w + inc; vb.h = vb.h + inc; }
+  else if (ev.keyCode === 77) { vb.w = vb.w - inc; vb.h = vb.h - inc; }
+  else if (ev.keyCode === 37) { vb.x = vb.x - (inc / 10); }
+  else if (ev.keyCode === 39) { vb.x = vb.x + (inc / 10); }
+  else if (ev.keyCode === 38) { vb.y = vb.y - (inc / 10); }
+  else if (ev.keyCode === 40) { vb.y = vb.y + (inc / 10); }
   else { clog(ev.keyCode); return; }
 
-  map.setAttribute('viewBox', '' + x + ' ' + y + ' ' + w + ' ' + h);
+  svg.setAttribute(
+    'viewBox',
+    '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+});
+
+svg.addEventListener('click', function(ev) {
+
+  var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+  var xy =  pt.matrixTransform(svg.getScreenCTM().inverse());
+
+  var vb = getViewBox();
+
+  vb.x = (xy.x - vb.w / 2).toFixed(0);
+  vb.y = (xy.y - vb.h / 2).toFixed(0);
+
+  svg.setAttribute(
+    'viewBox',
+    '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
 });
       })
 

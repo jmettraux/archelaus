@@ -274,5 +274,29 @@ describe Archelaus::Point do
       expect(@point.e).to eq(@grid[4 + 1, 6])
     end
   end
+
+  it 'determines correctly the six adjacent hexes' do
+
+    g = Archelaus
+      .compute_grid(54.41845, -0.23099, 100, 300, 300, :ne)
+      .truncate!(4, 4)
+
+#puts g.to_s
+#p g[1, 1]
+    expect(g[1, 1].nw).to eq(g[1, 0])
+    expect(g[1, 1].ne).to eq(g[2, 0])
+    expect(g[1, 1].w).to eq(g[0, 1])
+    expect(g[1, 1].e).to eq(g[2, 1])
+    expect(g[1, 1].sw).to eq(g[1, 2])
+    expect(g[1, 1].se).to eq(g[2, 2])
+
+#p g[0, 2]
+    expect(g[0, 2].nw).to eq(nil)
+    expect(g[0, 2].ne).to eq(g[0, 1])
+    expect(g[0, 2].w).to eq(nil)
+    expect(g[0, 2].e).to eq(g[1, 2])
+    expect(g[0, 2].sw).to eq(nil)
+    expect(g[0, 2].se).to eq(g[0, 3])
+  end
 end
 

@@ -33,8 +33,8 @@ module Archelaus
 
     def row; @grid.rows[@y]; end
 
-    def w; row[@x - 1]; end
-    def e; row[@x + 1]; end
+    def w; tget(row, @x - 1); end
+    def e; tget(row, @x + 1); end
 
     def inspect
 
@@ -53,17 +53,20 @@ module Archelaus
 
     protected
 
+    def tget(a, i); i < 0 ? nil : a[i]; end
+    def t3(a, x); [ tget(a, x - 1), tget(a, x), tget(a, x + 1) ]; end
+
     def adj(dir)
 
       p0, p1, p2 =
         dir == :nw || dir == :ne ?
-        (@grid.rows[@y - 1] || [])[@x - 1, 3] :
-        (@grid.rows[@y + 1] || [])[@x - 1, 3]
+        t3(@grid.rows[@y - 1] || [], @x) :
+        t3(@grid.rows[@y + 1] || [], @x)
 #puts "---"
 #p [ :X, self ]
-#p [ 0, p0, :d, self.lon - p0.lon ]
-#p [ 1, p1, :d, self.lon - p1.lon ]
-#p [ 2, p2, :d, self.lon - p2.lon ]
+#p [ 0, p0, :d, p0 ? (self.lon - p0.lon) : nil ]
+#p [ 1, p1, :d, p1 ? (self.lon - p1.lon) : nil ]
+#p [ 2, p2, :d, p2 ? (self.lon - p2.lon) : nil ]
 
       return nil unless p1
 
@@ -169,6 +172,15 @@ module Archelaus
       eles = @rows.flatten.collect(&:ele).compact + [ 0.0 ]
 
       [ eles.min, eles.max ]
+    end
+
+    # For testing purposes.
+    #
+    def truncate!(lx, ly)
+
+      @rows = @rows[0, ly].collect { |row| row[0, lx] }
+
+      self
     end
   end
 
