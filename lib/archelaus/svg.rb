@@ -2,7 +2,7 @@
 module Archelaus
 
   class Point
-    attr_accessor :el
+    attr_accessor :el, :elev
   end
 
   class << self
@@ -24,14 +24,22 @@ module Archelaus
       maken(head, :title, 'archelaus')
 
       maken(head, :style, %{
-body { margin: 0; padding: 0; }
+body {
+  margin: 0;
+  padding: 0; }
 svg text.t {
   color: grey;
-  font-size: 40; font-family: sans-serif; font-weight: bolder;
-  text-anchor: middle; opacity: 0.05; }
-use[href="#h"].g { fill: none; stroke: lightgrey; stroke-width: 1 }
-use[href="#h"].s { fill: lightblue; stroke: blue; stroke-width: 1 }
-path.sl { fill: none; stroke: black; stroke-width: 1 }
+  font-size: 30; font-family: sans-serif; font-weight: bolder;
+  text-anchor: middle;
+  opacity: 0.05; }
+use[href="#h"].g {
+  fill: none; stroke: lightgrey; stroke-width: 1; }
+use[href="#h"].s {
+  fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
+path.sl {
+  fill: none; stroke: black; stroke-width: 1 }
+#patterns {
+  display: none; }
       })
 
       body = maken(html, :body)
@@ -50,7 +58,9 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
         xmlns: 'http://www.w3.org/2000/svg',
         width: '100%', height: '100%')
 
-      maken(svg, :path,
+      pats = maken(svg, :g, id: 'patterns')
+
+      maken(pats, :path,
         id: 'h',
         d:
           "M 0 #{-R1}" +
@@ -70,19 +80,20 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
           " L #{R0} #{-dy + i * R1 / s}" }
         .join(' ')
 
-      maken(svg, :path, id: 's0', class: 'sl', d: d)
-      maken(svg, :path, id: 's1', class: 'sl', d: d, transform: 'rotate(60)')
-      maken(svg, :path, id: 's2', class: 'sl', d: d, transform: 'rotate(120)')
-      maken(svg, :path, id: 's3', class: 'sl', d: d, transform: 'rotate(180)')
-      maken(svg, :path, id: 's4', class: 'sl', d: d, transform: 'rotate(240)')
-      maken(svg, :path, id: 's5', class: 'sl', d: d, transform: 'rotate(300)')
+      maken(pats, :path, id: 's0', class: 'sl', d: d)
+      maken(pats, :path, id: 's1', class: 'sl', d: d, transform: 'rotate(60)')
+      maken(pats, :path, id: 's2', class: 'sl', d: d, transform: 'rotate(120)')
+      maken(pats, :path, id: 's3', class: 'sl', d: d, transform: 'rotate(180)')
+      maken(pats, :path, id: 's4', class: 'sl', d: d, transform: 'rotate(240)')
+      maken(pats, :path, id: 's5', class: 'sl', d: d, transform: 'rotate(300)')
 
       loffs = [ 0, R0 ]
       loffs.reverse! if g[0][0].lon < g[1][0].lon
 
       g.rows.each do |row|
         row.each do |point|
-          point.el = point.ele ? (point.ele / 10).round : 0
+          point.elev = point.ele ? (point.ele * 100).to_i : -100
+          point.el = point.ele ? (point.ele / 10).round : -1
         end
       end
 
@@ -109,44 +120,56 @@ path.sl { fill: none; stroke: black; stroke-width: 1 }
             #id: point.id,
             x: loff + point.x * 100, y: point.y * 1.5 * R1)
 
-          eel = point.e ? point.e.el : 0
+          eel = point.e ? point.e.el : -1
+          seel = point.se ? point.se.el : -1
+          swel = point.sw ? point.sw.el : -1
+          wel = point.w ? point.w.el : -1
+          nwel = point.nw ? point.nw.el : -1
+          neel = point.ne ? point.ne.el : -1
+            #
+          eelev = point.e ? point.e.elev : -1
+          seelev = point.se ? point.se.elev : -1
+          swelev = point.sw ? point.sw.elev : -1
+          welev = point.w ? point.w.elev : -1
+          nwelev = point.nw ? point.nw.elev : -1
+          neelev = point.ne ? point.ne.elev : -1
+
           maken(svg, :use,
             href: '#s0',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < eel
-          seel = point.se ? point.se.el : 0
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > eel
           maken(svg, :use,
             href: '#s1',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < seel
-          swel = point.sw ? point.sw.el : 0
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > seel
           maken(svg, :use,
             href: '#s2',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < swel
-          wel = point.w ? point.w.el : 0
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > swel
           maken(svg, :use,
             href: '#s3',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < wel
-          nwel = point.nw ? point.nw.el : 0
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > wel
           maken(svg, :use,
             href: '#s4',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < nwel
-          neel = point.ne ? point.ne.el : 0
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > nwel
           maken(svg, :use,
             href: '#s5',
-            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el < neel
+            x: loff + point.x * 100, y: point.y * 1.5 * R1) if point.el > neel
 
 
           if point.ele
-            #eles = [ eel, seel, swel, wel, nwel, neel, point.el ]
+            elevs = [ eelev, seelev, swelev, welev, nwelev, neelev, point.elev ]
+            els = [ eel, seel, swel, wel, nwel, neel, point.el ]
             #if (
             #  #eles.count { |e| e == point.el } == 1 &&
             #  (eles.min == point.el || eles.max == point.el)
             #) then
-            maken(svg, :text,
-              point.ele.to_i.to_s, #+ 'm',
-              #point.el.to_s,
-              class: 't',
-              x: loff + point.x * 100, y: point.y * 1.5 * R1 + R0 / 4)
-            #end
+            if (
+              (elevs.min == point.elev || elevs.max == point.elev)
+            ) then
+              maken(svg, :text,
+                point.ele.to_i.to_s + 'm',
+                #point.el.to_s,
+                class: 't',
+                x: loff + point.x * 100, y: point.y * 1.5 * R1 + R0 / 4)
+            end
           end
         end
       end
