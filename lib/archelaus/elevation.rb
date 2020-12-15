@@ -76,9 +76,20 @@ module Archelaus
     end
   end
 
+  class Point
+
+    attr_accessor :ds
+  end
+
   class Grid
 
+    DIRS = %i[ e se sw w nw ne ]
+
+    attr_reader :maxd
+
     def load_elevations
+
+      @maxd = 0
 
       @rows.each do |row|
         row.each do |point|
@@ -86,6 +97,22 @@ module Archelaus
           point.ele = d['ele']
         end
       end
+      @rows.each do |row|
+        row.each do |point|
+          next unless point.ele
+          point.ds = {}
+          DIRS.each do |d|
+            dp = point.send(d); next unless dp
+            delta = point.ds[d] = point.ele - (dp.ele || 0)
+#STDERR.puts [ point.xy, point.ele, d, dp.xy, dp.ele, '->', delta ].inspect \
+#  if delta > @maxd
+            @maxd = delta if delta > @maxd
+          end
+        end
+      end
+#STDERR.puts @maxd.inspect
+
+      nil
     end
   end
 end

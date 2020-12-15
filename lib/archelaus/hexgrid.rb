@@ -58,9 +58,11 @@ module Archelaus
 
     def adj(dir)
 
+      overy = @grid.rows.count + 2
+
       p0, p1, p2 =
         dir == :nw || dir == :ne ?
-        t3(@grid.rows[@y - 1] || [], @x) :
+        t3(@grid.rows[@y == 0 ? overy : @y - 1] || [], @x) :
         t3(@grid.rows[@y + 1] || [], @x)
 #puts "---"
 #p dir
@@ -168,13 +170,6 @@ module Archelaus
       end
 
       s.string
-    end
-
-    def elevations
-
-      eles = @rows.flatten.collect(&:ele).compact + [ 0.0 ]
-
-      [ eles.min, eles.max ]
     end
 
     # For testing purposes.

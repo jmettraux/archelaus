@@ -3,6 +3,7 @@ module Archelaus
 
   class Point
     attr_accessor :el, :elev
+    attr_accessor :dks
   end
 
   class << self
@@ -52,12 +53,24 @@ use[href="#h"].g {
 use[href="#h"].s {
   fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
 
-use[href="#s0"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#s1"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#s2"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#s3"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#s4"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#sea"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#ssea"] { fill: none; stroke-width: 1.2; stroke: black; }
+use[href="#sswa"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#swa"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#snwa"] { fill: none; stroke-width: 0.8; stroke: grey; }
+use[href="#snea"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#seb"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#sseb"] { fill: none; stroke-width: 1.2; stroke: black; }
+use[href="#sswb"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#swb"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#snwb"] { fill: none; stroke-width: 0.8; stroke: grey; }
+use[href="#sneb"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#sec"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#ssec"] { fill: none; stroke-width: 1.2; stroke: black; }
+use[href="#sswc"] { fill: none; stroke-width: 1; stroke: black; }
+use[href="#swc"] { fill: none; stroke-width: 1; stroke: grey; }
+use[href="#snwc"] { fill: none; stroke-width: 0.8; stroke: grey; }
+use[href="#snec"] { fill: none; stroke-width: 1; stroke: grey; }
 
 use[href="#H"] {
   fill: none; stroke: lightgrey; stroke-width: 2; }
@@ -96,22 +109,26 @@ use[href="#H"] {
           " L 0 #{-R1}",
         fill: 'none')
 
-      s = 6
-      d = s.times
-        .collect { |i|
-          dy = 0.88 * DY
-          "M #{(i == 0 ? 0.87 : 0.66) * R0} #{-dy + i * R1 / s}" +
-          " L #{R0} #{-dy + i * R1 / s}" }
-        .join(' ')
+      { a: 0.70, b: 0.60, c: 0.50 }.each do |k, v|
 
-      maken(pats, :path, id: 's0', class: 'sl', d: d)
-      maken(pats, :path, id: 's1', class: 'sl', d: d, transform: 'rotate(60)')
-      maken(pats, :path, id: 's2', class: 'sl', d: d, transform: 'rotate(120)')
-      maken(pats, :path, id: 's3', class: 'sl', d: d, transform: 'rotate(180)')
-      maken(pats, :path, id: 's4', class: 'sl', d: d, transform: 'rotate(240)')
-      maken(pats, :path, id: 's5', class: 'sl', d: d, transform: 'rotate(300)')
-        #
-        # hachures
+        s = 6
+        d = s.times
+          .collect { |i|
+            dy = 0.88 * DY
+            #"M #{(i == 0 ? 0.87 : 0.66) * R0} #{-dy + i * R1 / s}" +
+            "M #{(i == 0 ? 0.87 : v) * R0} #{-dy + i * R1 / s}" +
+            " L #{R0} #{-dy + i * R1 / s}" }
+          .join(' ')
+
+        maken(pats, :path, id: "se#{k}", d: d)
+        maken(pats, :path, id: "sse#{k}", d: d, transform: 'rotate(60)')
+        maken(pats, :path, id: "ssw#{k}", d: d, transform: 'rotate(120)')
+        maken(pats, :path, id: "sw#{k}", d: d, transform: 'rotate(180)')
+        maken(pats, :path, id: "snw#{k}", d: d, transform: 'rotate(240)')
+        maken(pats, :path, id: "sne#{k}", d: d, transform: 'rotate(300)')
+          #
+          # hachures
+      end
 
       maken(pats, :path, # 1km hex
         id: 'H',
@@ -132,10 +149,39 @@ use[href="#H"] {
 #STDERR.puts g[0, 0].lon
 #STDERR.puts p g[0, 1].lon
 
+      #emin, emax = g.elevations
+      #delta = emax - emin
+      #ed1 = emin + delta * 0.25
+      #ed2 = emin + delta * 0.75
+#STDERR.puts [ :emin, emin, :emax, emax ].inspect
+#STDERR.puts [ :ed1, ed1, :ed2, ed2 ].inspect
+      #dirs = %i[ e se sw w nw ne ]
+      #g.rows.each do |row|
+      #  row.each do |point|
+      #    dirs.each do |d|
+      #      dp = point.send(d); next unless dp
+      #      point.send("#{d}_d=", (dp.k
+      #    end
+      #  end
+      #end
+
+      d1 = g.maxd * 0.33
+      d2 = g.maxd * 0.66
+#STDERR.puts [ d1, d2, '<-', g.maxd ].inspect
+
       g.rows.each do |row|
         row.each do |point|
           point.elev = point.ele ? (point.ele * 100).to_i : -100
           point.el = point.ele ? (point.ele / 10).round : -1
+#STDERR.puts point.ds.inspect
+          point.dks = point.ds
+            .inject({}) { |h, (k, v)|
+              if v > 0.0 && v < d1;     h[k] = :a
+              elsif v >= d1 && v < d2;  h[k] = :b
+              elsif v >= d2;            h[k] = :c
+              end
+              h } if point.ds
+#STDERR.puts(point.dks.inspect) if point.dks && point.dks.values.include?(:c)
         end
       end
 
@@ -160,12 +206,12 @@ use[href="#H"] {
             maken(svg, :use, href: '#H', x: px, y: py)
           end
 
-          eel = point.e ? point.e.el : -1
-          seel = point.se ? point.se.el : -1
-          swel = point.sw ? point.sw.el : -1
-          wel = point.w ? point.w.el : -1
-          nwel = point.nw ? point.nw.el : -1
-          neel = point.ne ? point.ne.el : -1
+          #eel = point.e ? point.e.el : -1
+          #seel = point.se ? point.se.el : -1
+          #swel = point.sw ? point.sw.el : -1
+          #wel = point.w ? point.w.el : -1
+          #nwel = point.nw ? point.nw.el : -1
+          #neel = point.ne ? point.ne.el : -1
 #if point.xy == [ 106, 3 ]
 #  STDERR.puts "---"
 #  STDERR.puts point.inspect
@@ -177,14 +223,24 @@ use[href="#H"] {
 #  STDERR.puts [ :ne, point.ne ].inspect
 #end
 
-          maken(svg, :use, href: '#s0', x: px, y: py) if point.el > eel
-          maken(svg, :use, href: '#s1', x: px, y: py) if point.el > seel
-          maken(svg, :use, href: '#s2', x: px, y: py) if point.el > swel
-          maken(svg, :use, href: '#s3', x: px, y: py) if point.el > wel
-          maken(svg, :use, href: '#s4', x: px, y: py) if point.el > nwel
-          maken(svg, :use, href: '#s5', x: px, y: py) if point.el > neel
+          #maken(svg, :use, href: '#s0', x: px, y: py) if point.el > eel
+          #maken(svg, :use, href: '#s1', x: px, y: py) if point.el > seel
+          #maken(svg, :use, href: '#s2', x: px, y: py) if point.el > swel
+          #maken(svg, :use, href: '#s3', x: px, y: py) if point.el > wel
+          #maken(svg, :use, href: '#s4', x: px, y: py) if point.el > nwel
+          #maken(svg, :use, href: '#s5', x: px, y: py) if point.el > neel
+          point.dks
+            .each { |k, v| maken(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
+              } if point.dks
 
           if point.ele
+
+            eel = point.e ? point.e.el : -1
+            seel = point.se ? point.se.el : -1
+            swel = point.sw ? point.sw.el : -1
+            wel = point.w ? point.w.el : -1
+            nwel = point.nw ? point.nw.el : -1
+            neel = point.ne ? point.ne.el : -1
 
             eelev = point.e ? point.e.elev : -1
             seelev = point.se ? point.se.elev : -1
@@ -193,8 +249,10 @@ use[href="#H"] {
             nwelev = point.nw ? point.nw.elev : -1
             neelev = point.ne ? point.ne.elev : -1
 
-            elevs = [ eelev, seelev, swelev, welev, nwelev, neelev, point.elev ]
-            els = [ eel, seel, swel, wel, nwel, neel, point.el ]
+            elevs = [
+              eelev, seelev, swelev, welev, nwelev, neelev, point.elev ]
+            els = [
+              eel, seel, swel, wel, nwel, neel, point.el ]
 
             locals = [
               point.e, point.se, point.sw, point.w, point.nw, point.ne
