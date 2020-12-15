@@ -59,6 +59,9 @@ use[href="#s3"] { fill: none; stroke-width: 1; stroke: grey; }
 use[href="#s4"] { fill: none; stroke-width: 0.8; stroke: grey; }
 use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
 
+use[href="#H"] {
+  fill: none; stroke: lightgrey; stroke-width: 2; }
+
 #patterns {
   display: none; }
       })
@@ -81,7 +84,7 @@ use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
 
       pats = maken(svg, :g, id: 'patterns')
 
-      maken(pats, :path,
+      maken(pats, :path, # 100m hex
         id: 'h',
         d:
           "M 0 #{-R1}" +
@@ -107,6 +110,20 @@ use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
       maken(pats, :path, id: 's3', class: 'sl', d: d, transform: 'rotate(180)')
       maken(pats, :path, id: 's4', class: 'sl', d: d, transform: 'rotate(240)')
       maken(pats, :path, id: 's5', class: 'sl', d: d, transform: 'rotate(300)')
+        #
+        # hachures
+
+      maken(pats, :path, # 1km hex
+        id: 'H',
+        d:
+          "M 0 #{-R1 * 10}" +
+          " L #{R0 * 10} #{-DY * 10}" +
+          " L #{R0 * 10} #{DY * 10}" +
+          " L 0 #{R1 * 10}" +
+          " L #{-R0 * 10} #{DY * 10}" +
+          " L #{-R0 * 10} #{-DY * 10}" +
+          " L 0 #{-R1 * 10}",
+        fill: 'none')
 
       loffs =
         g[0, 0].lon < g[0, 1].lon ?
@@ -123,7 +140,7 @@ use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
       end
 
       #g.rows.each do |row|
-      g.rows[0, 200].each do |row|
+      g.rows[0, 160].each do |row|
 
         #row.each do |point|
         row[0, 180].each do |point|
@@ -134,9 +151,14 @@ use[href="#s5"] { fill: none; stroke-width: 1; stroke: grey; }
           py = point.y * 1.5 * R1
 
           cla = point.ele == nil ? 's' : 'g'
-          maken(svg, :use,
-            #id: point.id,
-            href: '#h', class: cla, x: px, y: py)
+          maken(svg, :use, href: '#h', class: cla, x: px, y: py)
+
+          if (
+            point.x % 10 == 0 && point.y % 20 == 0 ||
+            point.x % 10 == 5 && point.y % 20 == 10
+          ) then
+            maken(svg, :use, href: '#H', x: px, y: py)
+          end
 
           eel = point.e ? point.e.el : -1
           seel = point.se ? point.se.el : -1
