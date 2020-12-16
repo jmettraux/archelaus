@@ -15,5 +15,8 @@ class Float
   def to_fixed5
     sprintf('%#.06f', self)[0..-2]
   end
+
+  def to_fixed1; sprintf('%#.01f', self); end
+  def to_fixed2; sprintf('%#.02f', self); end
 end
 

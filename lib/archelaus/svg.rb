@@ -86,7 +86,9 @@ use[href="#H"] {
 
       #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
-      viewbox = [ 0, 0, 5000, 5000 ]
+      #viewbox = [ 0, 0, 5000, 5000 ]
+      #viewbox = [ 8925, -689, 5000, 5000 ]
+      viewbox = [ 10425, 111, 3000, 3000 ]
 
       svg = maken(body, :svg,
         id: 'svg-map',
@@ -109,7 +111,7 @@ use[href="#H"] {
           " L 0 #{-R1}",
         fill: 'none')
 
-      { a: 0.70, b: 0.60, c: 0.50 }.each do |k, v|
+      { a: 0.80, b: 0.70, c: 0.60 }.each do |k, v|
 
         s = 6
         d = s.times
@@ -165,9 +167,11 @@ use[href="#H"] {
       #  end
       #end
 
+      #d0 = g.maxd * 0.1
+      d0 = 5.0
       d1 = g.maxd * 0.33
       d2 = g.maxd * 0.66
-#STDERR.puts [ d1, d2, '<-', g.maxd ].inspect
+#STDERR.puts [ d0, d1, d2, '<-', g.maxd ].inspect
 
       g.rows.each do |row|
         row.each do |point|
@@ -176,7 +180,7 @@ use[href="#H"] {
 #STDERR.puts point.ds.inspect
           point.dks = point.ds
             .inject({}) { |h, (k, v)|
-              if v > 0.0 && v < d1;     h[k] = :a
+              if v > d0 && v < d1;      h[k] = :a
               elsif v >= d1 && v < d2;  h[k] = :b
               elsif v >= d2;            h[k] = :c
               end
@@ -262,9 +266,11 @@ use[href="#H"] {
 
             k =
               if ledge.all? { |pt| pt.elev < point.elev }
-                't gx' # ledge max
+                #'t gx' # ledge max
+                nil
               elsif ledge.all? { |pt| pt.elev > point.elev }
-                't gn' # ledge min
+                #'t gn' # ledge min
+                nil
               elsif elevs.min == point.elev
                 't mn' # hole
               elsif elevs.max == point.elev
@@ -273,8 +279,10 @@ use[href="#H"] {
                 nil
               end
 
+k = k || 't mn'
             maken(svg, :text,
-              point.ele.to_i.to_s + 'm',
+              #point.ele.to_i.to_s + 'm',
+              point.ele.to_fixed1,
               #point.el.to_s,
               #"#{point.ele.to_i} #{point.xy.join(',')}",
               class: k, x: px, y: py + R0 / 4

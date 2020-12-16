@@ -84,6 +84,7 @@ module Archelaus
   class Grid
 
     DIRS = %i[ e se sw w nw ne ]
+    SEA_LEVEL = -10.0
 
     attr_reader :maxd
 
@@ -103,7 +104,7 @@ module Archelaus
           point.ds = {}
           DIRS.each do |d|
             dp = point.send(d); next unless dp
-            delta = point.ds[d] = point.ele - (dp.ele || 0)
+            delta = point.ds[d] = point.ele - (dp.ele || SEA_LEVEL)
 #STDERR.puts [ point.xy, point.ele, d, dp.xy, dp.ele, '->', delta ].inspect \
 #  if delta > @maxd
             @maxd = delta if delta > @maxd
