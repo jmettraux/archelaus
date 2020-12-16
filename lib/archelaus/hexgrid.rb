@@ -180,6 +180,18 @@ module Archelaus
 
       self
     end
+
+    def each_point(&block)
+
+      @rows.each { |row| row.each(&block) }
+
+      self
+    end
+
+    def points
+
+      @rows.inject([]) { |a, row| a.concat(row) }
+    end
   end
 
   class << self

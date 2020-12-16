@@ -14,10 +14,12 @@ fail ArgumentError.new(
 lat, lon = ARGV.shift.to_f, ARGV.shift.to_f
 
   # bin/fetch NE 54.41845 -0.23099
+  # bin/fetch NW 54.44860 -0.62332
   #
 grid = Archelaus.compute_grid(
   lat, lon,
-  100, 300, 300, corner.downcase.to_sym)
+  100,
+  100, 100, corner.downcase.to_sym)
 
-Archelaus.get_elevations(grid)
+Archelaus.fetch_elevations(grid)
 

@@ -15,7 +15,9 @@ lat, lon = ARGV.shift.to_f, ARGV.shift.to_f
 
 puts Archelaus.generate_svg(
   lat, lon,
-  100, 300, 300, corner.downcase.to_sym)
+  100,
+  100, 150,
+  corner.downcase.to_sym)
     #
     # bin/generate NE 54.41845 -0.23099
 

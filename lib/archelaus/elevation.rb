@@ -14,65 +14,75 @@ module Archelaus
 
   class << self
 
-    def get_elevations(grid_or_points)
+    def fetch_elevations(grid_or_points_or_latlons)
 
-      if grid_or_points.is_a?(Array)
-        get_elevations_grid(grid_or_points)
-      else
-        get_elevations_100(grid_or_points)
-      end
+      fetch_elevations_list(
+        grid_or_points_or_latlons.respond_to?(:points) ?
+        grid_or_points_or_latlons.points :
+        grid_or_points_or_latlons)
     end
 
     protected
 
-    def get_elevations_grid(grid)
+    def fetch_elevations_list(points_or_latlons)
 
-      grid
-        .flatten(1)
-        .reject { |point| has_elevation?(point) }
-        .each_slice(100) { |points| get_elevations_100(points) }
-
-      grid.collect { |r| r.collect { |point| load_elevation(point) } }
+      points_or_latlons
+        .reject { |p_or_ll| has_elevation?(p_or_ll) }
+        .each_slice(100) { |ps_or_lls| fetch_elevations_100(ps_or_lls) }
     end
 
     ELEVATION_URI = 'https://api.opentopodata.org/v1/eudem25m'
       #?locations=57.688709,11.976404|57.2,11.8"
 
-    def get_elevations_100(points)
+    def fetch_elevations_100(points_or_latlons)
 
-      fail ArgumentError.new("too many points #{points.length} > 100") \
-        if points.length > 100
+      fail ArgumentError.new(
+        "too many points or latlons #{points_or_latlons.length} > 100"
+      ) if points_or_latlons.length > 100
 
-      ls = points.collect { |pt| "#{pt[0]},#{pt[1]}" }.join('|')
+      ls = points_or_latlons
+        .collect { |p_or_ll|
+          lat, lon = to_latlon(p_or_ll)
+          "#{lat.to_fixed5},#{lon.to_fixed5}" }
+        .join('|')
 
       res = http_get(ELEVATION_URI, locations: ls)
       es = JSON.parse(res)['results'].collect { |e| e['elevation'] }
 
-      points.zip(es).each do |point, e|
-        save_elevation(point, e)
+      points_or_latlons.zip(es).each do |p_or_ll, e|
+        save_elevation(p_or_ll, e)
       end
     end
 
-    def save_elevation(point, elevation)
+    def save_elevation(point_or_latlon, elevation)
 
-      File.open(elevation_filename(point), 'wb') do |f|
-        f.print(JSON.dump(lat: point[0], lon: point[1], ele: elevation))
+      lat, lon = to_latlon(point_or_latlon)
+
+      File.open(elevation_filename(point_or_latlon), 'wb') do |f|
+        f.print(JSON.dump(lat: lat, lon: lon, ele: elevation))
       end
     end
 
-    def has_elevation?(point)
+    def has_elevation?(point_or_latlon)
 
-      File.exist?(elevation_filename(point))
+      File.exist?(elevation_filename(point_or_latlon))
     end
 
-    def load_elevation(point)
+    def load_elevation(point_or_latlon)
 
-      JSON.parse(File.read(elevation_filename(point)))
+      JSON.parse(File.read(elevation_filename(point_or_latlon)))
     end
 
-    def elevation_filename(point)
+    def elevation_filename(point_or_latlon)
 
-      "var/elevations/e__#{point[0].to_fixed5}__#{point[1].to_fixed5}.json"
+      lat, lon = to_latlon(point_or_latlon)
+
+      "var/elevations/e__#{lat.to_fixed5}__#{lon.to_fixed5}.json"
+    end
+
+    def to_latlon(point_or_latlon)
+
+      point_or_latlon.is_a?(Array) ? point_or_latlon : point_or_latlon.latlon
     end
   end
 
@@ -92,23 +102,19 @@ module Archelaus
 
       @maxd = 0
 
-      @rows.each do |row|
-        row.each do |point|
-          d = Archelaus.send(:load_elevation, point) rescue {}
-          point.ele = d['ele']
-        end
+      each_point do |point|
+        d = Archelaus.send(:load_elevation, point) rescue {}
+        point.ele = d['ele']
       end
-      @rows.each do |row|
-        row.each do |point|
-          next unless point.ele
-          point.ds = {}
-          DIRS.each do |d|
-            dp = point.send(d); next unless dp
-            delta = point.ds[d] = point.ele - (dp.ele || SEA_LEVEL)
+      each_point do |point|
+        next unless point.ele
+        point.ds = {}
+        DIRS.each do |d|
+          dp = point.send(d); next unless dp
+          delta = point.ds[d] = point.ele - (dp.ele || SEA_LEVEL)
 #STDERR.puts [ point.xy, point.ele, d, dp.xy, dp.ele, '->', delta ].inspect \
 #  if delta > @maxd
-            @maxd = delta if delta > @maxd
-          end
+          @maxd = delta if delta > @maxd
         end
       end
 #STDERR.puts @maxd.inspect

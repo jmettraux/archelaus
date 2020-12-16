@@ -87,7 +87,7 @@ use[href="#H"] {
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
       #viewbox = [ 0, 0, 5000, 5000 ]
       #viewbox = [ 8925, -689, 5000, 5000 ]
-      viewbox = [ 10425, 111, 3000, 3000 ]
+      viewbox = [ 0, 0, 3000, 3000 ]
 
       svg = maken(body, :svg,
         id: 'svg-map',
@@ -172,11 +172,9 @@ use[href="#H"] {
         end
       end
 
-      #g.rows.each do |row|
-      g.rows[0, 160].each do |row|
+      g.rows.each do |row|
 
-        #row.each do |point|
-        row[0, 180].each do |point|
+        row.each do |point|
 
           loff = loffs[point.y % 2]
 
@@ -259,20 +257,20 @@ document.body.addEventListener('keyup', function(ev) {
     '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
 });
 
-svg.addEventListener('click', function(ev) {
-
-  var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
-  var xy =  pt.matrixTransform(svg.getScreenCTM().inverse());
-
-  var vb = getViewBox();
-
-  vb.x = (xy.x - vb.w / 2).toFixed(0);
-  vb.y = (xy.y - vb.h / 2).toFixed(0);
-
-  svg.setAttribute(
-    'viewBox',
-    '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
-});
+//svg.addEventListener('click', function(ev) {
+//
+//  var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+//  var xy =  pt.matrixTransform(svg.getScreenCTM().inverse());
+//
+//  var vb = getViewBox();
+//
+//  vb.x = (xy.x - vb.w / 2).toFixed(0);
+//  vb.y = (xy.y - vb.h / 2).toFixed(0);
+//
+//  svg.setAttribute(
+//    'viewBox',
+//    '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+//});
       })
 
       Ox.dump(doc)
