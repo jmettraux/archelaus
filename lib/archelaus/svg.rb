@@ -31,17 +31,16 @@ body {
 
 svg text.t {
   font-size: 21;
-  color: grey; font-family: sans-serif; font-weight: bolder;
+  color: black;
+  font-family: sans-serif; font-weight: bolder;
   text-anchor: middle;
-  opacity: 0.21; }
-svg text.t.gx {
-  color: lightgrey;
-}
-svg text.t.gn {
-  font-size: 18;
+  opacity: 0.08; }
+svg text.t.sl {
+  font-size: 14;
   color: lightgrey;
 }
 svg text.t.mx {
+  font-size: 28;
 }
 svg text.t.mn {
   font-size: 18;
@@ -151,22 +150,6 @@ use[href="#H"] {
 #STDERR.puts g[0, 0].lon
 #STDERR.puts p g[0, 1].lon
 
-      #emin, emax = g.elevations
-      #delta = emax - emin
-      #ed1 = emin + delta * 0.25
-      #ed2 = emin + delta * 0.75
-#STDERR.puts [ :emin, emin, :emax, emax ].inspect
-#STDERR.puts [ :ed1, ed1, :ed2, ed2 ].inspect
-      #dirs = %i[ e se sw w nw ne ]
-      #g.rows.each do |row|
-      #  row.each do |point|
-      #    dirs.each do |d|
-      #      dp = point.send(d); next unless dp
-      #      point.send("#{d}_d=", (dp.k
-      #    end
-      #  end
-      #end
-
       #d0 = g.maxd * 0.1
       d0 = 5.0
       d1 = g.maxd * 0.33
@@ -210,84 +193,31 @@ use[href="#H"] {
             maken(svg, :use, href: '#H', x: px, y: py)
           end
 
-          #eel = point.e ? point.e.el : -1
-          #seel = point.se ? point.se.el : -1
-          #swel = point.sw ? point.sw.el : -1
-          #wel = point.w ? point.w.el : -1
-          #nwel = point.nw ? point.nw.el : -1
-          #neel = point.ne ? point.ne.el : -1
-#if point.xy == [ 106, 3 ]
-#  STDERR.puts "---"
-#  STDERR.puts point.inspect
-#  STDERR.puts [ :e, point.e ].inspect
-#  STDERR.puts [ :se, point.se ].inspect
-#  STDERR.puts [ :sw, point.sw ].inspect
-#  STDERR.puts [ :w, point.w ].inspect
-#  STDERR.puts [ :nw, point.nw ].inspect
-#  STDERR.puts [ :ne, point.ne ].inspect
-#end
-
-          #maken(svg, :use, href: '#s0', x: px, y: py) if point.el > eel
-          #maken(svg, :use, href: '#s1', x: px, y: py) if point.el > seel
-          #maken(svg, :use, href: '#s2', x: px, y: py) if point.el > swel
-          #maken(svg, :use, href: '#s3', x: px, y: py) if point.el > wel
-          #maken(svg, :use, href: '#s4', x: px, y: py) if point.el > nwel
-          #maken(svg, :use, href: '#s5', x: px, y: py) if point.el > neel
           point.dks
             .each { |k, v| maken(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
               } if point.dks
 
-          if point.ele
+          k =
+            if ! point.dks
+              nil
+            elsif point.dks.count > 0
+              't sl'
+            elsif point.ds.all? { |_, v| v > 0.0 }
+              't mx'
+            elsif point.ds.all? { |_, v| v < 0.0 }
+              't mn'
+            else
+              nil
+            end
 
-            eel = point.e ? point.e.el : -1
-            seel = point.se ? point.se.el : -1
-            swel = point.sw ? point.sw.el : -1
-            wel = point.w ? point.w.el : -1
-            nwel = point.nw ? point.nw.el : -1
-            neel = point.ne ? point.ne.el : -1
-
-            eelev = point.e ? point.e.elev : -1
-            seelev = point.se ? point.se.elev : -1
-            swelev = point.sw ? point.sw.elev : -1
-            welev = point.w ? point.w.elev : -1
-            nwelev = point.nw ? point.nw.elev : -1
-            neelev = point.ne ? point.ne.elev : -1
-
-            elevs = [
-              eelev, seelev, swelev, welev, nwelev, neelev, point.elev ]
-            els = [
-              eel, seel, swel, wel, nwel, neel, point.el ]
-
-            locals = [
-              point.e, point.se, point.sw, point.w, point.nw, point.ne
-                ].compact
-            ledge = locals
-              .select { |pt| pt.el == point.el }
-
-            k =
-              if ledge.all? { |pt| pt.elev < point.elev }
-                #'t gx' # ledge max
-                nil
-              elsif ledge.all? { |pt| pt.elev > point.elev }
-                #'t gn' # ledge min
-                nil
-              elsif elevs.min == point.elev
-                't mn' # hole
-              elsif elevs.max == point.elev
-                't mx' # summit
-              else
-                nil
-              end
-
-k = k || 't mn'
-            maken(svg, :text,
-              #point.ele.to_i.to_s + 'm',
-              point.ele.to_fixed1,
-              #point.el.to_s,
-              #"#{point.ele.to_i} #{point.xy.join(',')}",
-              class: k, x: px, y: py + R0 / 4
-                ) if k
-          end
+          maken(svg, :text,
+            point.ele.to_i.to_s,
+            #point.ele.to_i.to_s + 'm',
+            #point.ele.to_fixed1,
+            #point.el.to_s,
+            #"#{point.ele.to_i} #{point.xy.join(',')}",
+            class: k, x: px, y: py + R0 / 4
+              ) if k
         end
       end
 
