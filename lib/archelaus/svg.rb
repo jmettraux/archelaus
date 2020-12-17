@@ -95,7 +95,7 @@ use[href="#H"] {
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
       #viewbox = [ 0, 0, 5000, 5000 ]
       #viewbox = [ 8925, -689, 5000, 5000 ]
-      viewbox = [ 0, 0, 3000, 3000 ]
+      viewbox = [ 0, 0, 2000, 2000 ]
 
       svg = maken(body, :svg,
         id: 'svg-map',
