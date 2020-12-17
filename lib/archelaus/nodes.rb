@@ -14,6 +14,14 @@ module Archelaus
         (
           way[waterway=river](#{p0p1});
           way[waterway=stream](#{p0p1});
+          way[natural=water](#{p0p1});
+
+          way[natural=wood](#{p0p1});
+          way[landuse=forest](#{p0p1});
+
+          way[amenity=place_of_worship](#{p0p1});
+
+          node[historic](#{p0p1});
         );
         (._;>;);
         out;
