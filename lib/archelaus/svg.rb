@@ -53,6 +53,8 @@ svg text.t.mn {
   color: lightgrey;
 }
 
+use[href="#h"] {
+  pointer-events: visible; } /* so that clicking on a hex targets that hex */
 use[href="#h"].g {
   fill: none; stroke: lightgrey; stroke-width: 1; }
 use[href="#h"].s {
@@ -267,20 +269,25 @@ document.body.addEventListener('keyup', function(ev) {
     '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
 });
 
-//svg.addEventListener('click', function(ev) {
-//
-//  var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
-//  var xy =  pt.matrixTransform(svg.getScreenCTM().inverse());
-//
-//  var vb = getViewBox();
-//
-//  vb.x = (xy.x - vb.w / 2).toFixed(0);
-//  vb.y = (xy.y - vb.h / 2).toFixed(0);
-//
-//  svg.setAttribute(
-//    'viewBox',
-//    '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
-//});
+svg.addEventListener('click', function(ev) {
+
+//clog(ev);
+//clog(ev.target);
+  var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+  var xy =  pt.matrixTransform(svg.getScreenCTM().inverse());
+
+  clog(ev.clientX, ev.clientY);
+  clog(xy.x, xy.y);
+
+  //var vb = getViewBox();
+  //
+  //vb.x = (xy.x - vb.w / 2).toFixed(0);
+  //vb.y = (xy.y - vb.h / 2).toFixed(0);
+  //
+  //svg.setAttribute(
+  //  'viewBox',
+  //  '' + vb.x + ' ' + vb.y + ' ' + vb.w + ' ' + vb.h);
+});
       })
 
       Ox.dump(doc)
