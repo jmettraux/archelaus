@@ -192,6 +192,22 @@ module Archelaus
 
       @rows.inject([]) { |a, row| a.concat(row) }
     end
+
+    def corners
+
+      { ne: @rows[0][-1], se: @rows[-1][-1], sw: @rows[-1][0], nw: @rows[0][0] }
+    end
+
+    # The corners used by the Overpass API
+    # https://dev.overpass-api.de/overpass-doc/en/full_data/bbox.html
+    #
+    def swne
+
+      sw = @rows[-1][0]
+      ne = @rows[0][-1]
+
+      [ sw.lat, sw.lon, ne.lat, ne.lon ]
+    end
   end
 
   class << self
