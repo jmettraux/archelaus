@@ -22,6 +22,7 @@ module Archelaus
           way[amenity=place_of_worship](#{p0p1});
 
           node[historic](#{p0p1});
+          node[natural=spring](#{p0p1});
         );
         (._;>;);
         out;
