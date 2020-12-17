@@ -110,7 +110,8 @@ use[href="#H"] {
           " L 0 #{-R1}",
         fill: 'none')
 
-      { a: 0.80, b: 0.70, c: 0.60 }.each do |k, v|
+      #{ a: 0.80, b: 0.70, c: 0.60 }.each do |k, v|
+      { a: 0.80, b: 0.70, c: 0.50 }.each do |k, v|
 
         s = 6
         d = s.times

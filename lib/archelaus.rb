@@ -81,7 +81,7 @@ end
 
 require 'archelaus/svg'
 require 'archelaus/http'
-require 'archelaus/hexgrid'
-require 'archelaus/overpass'
-require 'archelaus/elevation'
+require 'archelaus/grid'
+require 'archelaus/nodes'
+require 'archelaus/elevations'
 

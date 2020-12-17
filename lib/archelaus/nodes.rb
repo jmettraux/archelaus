@@ -5,12 +5,9 @@ module Archelaus
 
   class << self
 
-    def get_elements(*points)
+    def fetch_nodes(grid)
 
-      lat0, lon0, lat1, lon1 = points.flatten
-
-      #point0, point1 = point1, point0 if point0[1] < point1[1]
-      lat0, lon0, lat1, lon1 = lat1, lon1, lat0, lon0 if lon0 < lon1
+      lat0, lon0, lat1, lon1 = grid.corners
 
       p0p1 = "#{lat0},#{lon0},#{lat1},#{lon1}"
 

@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+#
+# fetchn
+#
+# for fetch nodes
+#
+
 $: << File.join(__dir__, '../lib')
 
 require 'archelaus'
@@ -17,11 +23,14 @@ wid, hei = ARGV.shift.to_i, ARGV.shift.to_i
 wid = 100 if wid < 1
 hei = 100 if hei < 1
 
-puts Archelaus.generate_svg(
+  # bin/fetch NE 54.41845 -0.23099
+  # bin/fetch NW 54.44860 -0.62332
+  #
+grid = Archelaus.compute_grid(
   lat, lon,
   100, # meters, 100m between one hexagon to the next
   wid, hei,
   corner.downcase.to_sym)
-    #
-    # bin/generate NE 54.41845 -0.23099
+
+Archelaus.fetch_nodes(grid)
 
