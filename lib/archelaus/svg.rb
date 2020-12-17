@@ -2,8 +2,14 @@
 module Archelaus
 
   class Point
+
     attr_accessor :el, :elev
     attr_accessor :dks
+
+    def to_data_ll
+
+      "#{lat.to_fixed5} #{lon.to_fixed5} #{ele ? ele.to_fixed1 : 's'}"
+    end
   end
 
   class << self
@@ -183,7 +189,10 @@ use[href="#H"] {
           py = point.y * 1.5 * R1
 
           cla = point.ele == nil ? 's' : 'g'
-          maken(svg, :use, href: '#h', class: cla, x: px, y: py)
+          maken(
+            svg,
+            :use,
+            href: '#h', class: cla, x: px, y: py, 'data-ll': point.to_data_ll)
 
           if (
             point.x % 10 == 0 && point.y % 20 == 0 ||
