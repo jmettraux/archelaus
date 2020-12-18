@@ -40,7 +40,8 @@ svg text.t {
   color: black;
   font-family: sans-serif; font-weight: bolder;
   text-anchor: middle;
-  opacity: 0.08; }
+  opacity: 0.08;
+  user-select: none; }
 svg text.t.sl {
   font-size: 14;
   color: lightgrey;
