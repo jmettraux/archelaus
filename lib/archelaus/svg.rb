@@ -3,8 +3,12 @@ module Archelaus
 
   class Point
 
-    attr_accessor :el, :elev
     attr_accessor :dks
+
+    #attr_accessor :el, :elev
+    #point.elev = point.ele ? (point.ele * 100).to_i : -100
+    #point.el = point.ele ? (point.ele / 10).round : -1
+    def el; @el ||= (self.ele ? (self.ele / 10).round : -1); end
 
     def to_data_ll
 
@@ -112,21 +116,22 @@ module Archelaus
 #STDERR.puts p g[0, 1].lon
 
       #d0 = g.maxd * 0.1
-      d0 = 5.0
+      #d0 = 5.0
+      d0 = 0.0
       d1 = g.maxd * 0.33
       d2 = g.maxd * 0.66
 #STDERR.puts [ d0, d1, d2, '<-', g.maxd ].inspect
 
       g.rows.each do |row|
         row.each do |point|
-          point.elev = point.ele ? (point.ele * 100).to_i : -100
-          point.el = point.ele ? (point.ele / 10).round : -1
-#STDERR.puts point.ds.inspect
+#STDERR.puts point.dirs.inspect
           point.dks = point.ds
             .inject({}) { |h, (k, v)|
-              if v > d0 && v < d1;      h[k] = :a
-              elsif v >= d1 && v < d2;  h[k] = :b
-              elsif v >= d2;            h[k] = :c
+              kp = point.dirs[k]
+              #if v > d0 && v < d1;      h[k] = :a
+              if point.el > kp.el && v < d1;  h[k] = :a
+              elsif v >= d1 && v < d2;        h[k] = :b
+              elsif v >= d2;                  h[k] = :c
               end
               h } if point.ds
 #STDERR.puts(point.dks.inspect) if point.dks && point.dks.values.include?(:c)

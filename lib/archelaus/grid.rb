@@ -51,6 +51,12 @@ module Archelaus
     def sw; @sw ||= adj(:sw); end
     def se; @se ||= adj(:se); end
 
+    def dirs
+      @dirs ||= {
+        e: self.e, se: self.se, sw: self.sw,
+        w: self.w, nw: self.nw, ne: self.ne }
+    end
+
     protected
 
     def tget(a, i); i < 0 ? nil : a[i]; end
