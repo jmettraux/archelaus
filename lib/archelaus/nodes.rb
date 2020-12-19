@@ -31,6 +31,9 @@ module Archelaus
 
       puts http_get(OVERPASS_URI, data: q)
     end
+
+    def load_nodes(grid)
+    end
   end
 end
 

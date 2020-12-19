@@ -91,9 +91,9 @@ module Archelaus
 
   class Grid
 
-    attr_reader :rows
+    attr_reader :origin, :rows
 
-    def initialize(rows)
+    def initialize(origin, rows)
 
       rows.reverse! if rows[0][0].lat < rows[-1][0].lat
       rows.each { |r| r.reverse! } if rows[0][0].lon > rows[0][-1].lon
@@ -103,6 +103,7 @@ module Archelaus
           point.grid = self
           point.xy = [ x, y ] } }
 
+      @origin = origin
       @rows = rows
     end
 
@@ -242,6 +243,7 @@ module Archelaus
         end
 
       Archelaus::Grid.new(
+        origin,
         compute_line(-1, lat, lon, step, col_angles, height)
           .each_with_index
           .collect { |p0, y|

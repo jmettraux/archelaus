@@ -28,6 +28,7 @@ module Archelaus
 
       g = compute_grid(lat, lon, step, width, height, origin)
       g.load_elevations
+      g.load_nodes
 
       doc = Ox::Document.new
       html = maken(doc, :html)

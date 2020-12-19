@@ -14,5 +14,5 @@
 .rspec.out
 
 var/elevations/*.json
-var/overpasses/*.json
+var/nodes/*.json
 
