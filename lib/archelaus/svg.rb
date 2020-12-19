@@ -30,62 +30,8 @@ module Archelaus
       head = maken(html, :head)
       maken(head, :title, 'archelaus')
 
-      maken(head, :style, %{
-body {
-  margin: 0;
-  padding: 0; }
-
-svg text.t {
-  font-size: 21;
-  color: black;
-  font-family: sans-serif; font-weight: bolder;
-  text-anchor: middle;
-  opacity: 0.08;
-  user-select: none; }
-svg text.t.sl {
-  font-size: 14;
-  color: lightgrey;
-}
-svg text.t.mx {
-  font-size: 28;
-}
-svg text.t.mn {
-  font-size: 18;
-  color: lightgrey;
-}
-
-use[href="#h"] {
-  pointer-events: visible; } /* so that clicking on a hex targets that hex */
-use[href="#h"].g {
-  fill: none; stroke: lightgrey; stroke-width: 1; }
-use[href="#h"].s {
-  fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
-
-use[href="#sea"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#ssea"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswa"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swa"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwa"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#snea"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#seb"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#sseb"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswb"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swb"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwb"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#sneb"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#sec"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#ssec"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswc"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swc"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwc"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#snec"] { fill: none; stroke-width: 1; stroke: grey; }
-
-use[href="#H"] {
-  fill: none; stroke: lightgrey; stroke-width: 2; }
-
-#patterns {
-  display: none; }
-      })
+      maken(head, :style) <<
+        Ox::Raw.new(File.read(File.join(__dir__, 'svg.css')))
 
       body = maken(html, :body)
 
@@ -235,6 +181,8 @@ use[href="#H"] {
       maken(body, :script) <<
         Ox::Raw.new(File.read(File.join(__dir__, 'svg.js')))
 
+      #maken(body, :div, { class: 'menu' }, 'NADA')
+
       Ox.dump(doc)
     end
 
@@ -242,14 +190,11 @@ use[href="#H"] {
 
     def maken(parent, tag, text=nil, atts={})
 
-      if text.is_a?(Hash)
-        atts = text
-        text = nil
-      end
+      text, atts = atts, text if text.is_a?(Hash)
 
       e = Ox::Element.new(tag.to_s)
       atts.each { |k, v| e[k] = v }
-      e << text if text
+      e << text if text && text.is_a?(String)
 
       parent << e
 
