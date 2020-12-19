@@ -69,7 +69,7 @@ use[href="#snwc"]  { stroke-width: var(--sl-nw-w); stroke: var(--sl-nw-c); }
 use[href="#snec"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
 
 use[href="#H"] {
-  fill: none; stroke: lightgrey; stroke-width: 3.5; }
+  fill: none; stroke: lightgrey; stroke-width: 4.2; }
 
 #patterns {
   display: none; }
