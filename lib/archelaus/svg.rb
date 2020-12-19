@@ -198,6 +198,7 @@ module Archelaus
 
       maken(nav, :span, { class: 'nw' }, 'NW')
       maken(nav, :span, { class: 'ne' }, 'NE')
+      maken(nav, :span, { class: 'c' }, 'C')
       maken(nav, :span, { class: 'sw' }, 'SW')
       maken(nav, :span, { class: 'se' }, 'SE')
 
