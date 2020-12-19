@@ -62,8 +62,7 @@ module Archelaus
           " L 0 #{R1}" +
           " L #{-R0} #{DY}" +
           " L #{-R0} #{-DY}" +
-          " L 0 #{-R1}",
-        fill: 'none')
+          " L 0 #{-R1}")
 
       #{ a: 0.80, b: 0.70, c: 0.60 }.each do |k, v|
       { a: 0.80, b: 0.70, c: 0.50 }.each do |k, v|
@@ -96,8 +95,7 @@ module Archelaus
           " L 0 #{R1 * 10}" +
           " L #{-R0 * 10} #{DY * 10}" +
           " L #{-R0 * 10} #{-DY * 10}" +
-          " L 0 #{-R1 * 10}",
-        fill: 'none')
+          " L 0 #{-R1 * 10}")
 
       loffs =
         g[0, 0].lon < g[0, 1].lon ?
