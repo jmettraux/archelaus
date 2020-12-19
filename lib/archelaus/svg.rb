@@ -181,7 +181,9 @@ module Archelaus
       maken(body, :script) <<
         Ox::Raw.new(File.read(File.join(__dir__, 'svg.js')))
 
-      #maken(body, :div, { class: 'menu' }, 'NADA')
+      menu = maken(body, :div, { id: 'menu' })
+      maken(menu, :div, { class: 'latlon' }, '0.0 0.0')
+      maken(menu, :div, { class: 'elevation' }, '0.0m')
 
       Ox.dump(doc)
     end

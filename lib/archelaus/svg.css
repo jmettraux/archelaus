@@ -56,12 +56,23 @@ use[href="#H"] {
 #patterns {
   display: none; }
 
-div.menu {
+#menu {
   z-index: 9999;
   background-color: white;
-  border: 2px solid grey;
-  position: sticky;
-  left: 1em;
+  border: 2px solid lightgrey;
+  position: fixed;
+  right: 1em;
   bottom: 1em;
-    }
+  padding: 1em;
+  font-family: courier;
+  font-size: 12px;
+  width: 14em;
+}
+#menu > * {
+  text-align: center;
+}
+
+/*
+.hidden { display: none; }
+*/
 
