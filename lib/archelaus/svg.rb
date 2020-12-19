@@ -128,6 +128,9 @@ module Archelaus
         end
       end
 
+      south = nil
+      east = nil
+
       g.rows.each do |row|
 
         row.each do |point|
@@ -136,6 +139,9 @@ module Archelaus
 
           px = loff + point.x * 100
           py = point.y * 1.5 * R1
+
+          east = px
+          south = py
 
           cla = point.ele == nil ? 's' : 'g'
           maken(
@@ -178,12 +184,25 @@ module Archelaus
         end
       end
 
-      maken(body, :script) <<
-        Ox::Raw.new(File.read(File.join(__dir__, 'svg.js')))
+      east = east.to_i + 50
+      south = south.to_i + 50
+        #
+      maken(body, :script) << %{
+        window._east = #{east};
+        window._south = #{south}; }
 
       menu = maken(body, :div, { id: 'menu' })
       maken(menu, :div, { class: 'latlon' }, '0.0 0.0')
       maken(menu, :div, { class: 'elevation' }, '0.0m')
+      nav = maken(menu, :div, { class: 'nav' })
+
+      maken(nav, :span, { class: 'nw' }, 'NW')
+      maken(nav, :span, { class: 'ne' }, 'NE')
+      maken(nav, :span, { class: 'sw' }, 'SW')
+      maken(nav, :span, { class: 'se' }, 'SE')
+
+      maken(body, :script) <<
+        Ox::Raw.new(File.read(File.join(__dir__, 'svg.js')))
 
       Ox.dump(doc)
     end

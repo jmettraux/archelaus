@@ -71,6 +71,12 @@ use[href="#H"] {
 #menu > * {
   text-align: center;
 }
+#menu .nav {
+  margin-top: 0.49em;
+}
+#menu .nav > span {
+  cursor: pointer;
+}
 
 /*
 .hidden { display: none; }
