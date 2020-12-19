@@ -65,7 +65,7 @@ module Archelaus
           " L 0 #{-R1}")
 
       #{ a: 0.80, b: 0.70, c: 0.60 }.each do |k, v|
-      { a: 0.80, b: 0.70, c: 0.50 }.each do |k, v|
+      { a: 0.70, b: 0.50, c: 0.30 }.each do |k, v|
 
         s = 6
         d = s.times
@@ -195,8 +195,8 @@ module Archelaus
           py = point.y * 1.5 * R1
 
           if (
-            point.x % 10 == 0 && point.y % 20 == 0 ||
-            point.x % 10 == 5 && point.y % 20 == 10
+            (point.x % 10 == 5 && point.y % 20 == 6) ||
+            (point.x > 0 && point.x % 10 == 0 && point.y % 20 == 16)
           ) then
             maken(svg, :use, href: '#H', x: px, y: py)
           end
