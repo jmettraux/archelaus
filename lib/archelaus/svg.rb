@@ -75,15 +75,22 @@ module Archelaus
             "M #{(i == 0 ? 0.87 : v) * R0} #{-dy + i * R1 / s}" +
             " L #{R0} #{-dy + i * R1 / s}" }
           .join(' ')
+        c = 'slope'
 
-        maken(pats, :path, id: "se#{k}", d: d)
-        maken(pats, :path, id: "sse#{k}", d: d, transform: 'rotate(60)')
-        maken(pats, :path, id: "ssw#{k}", d: d, transform: 'rotate(120)')
-        maken(pats, :path, id: "sw#{k}", d: d, transform: 'rotate(180)')
-        maken(pats, :path, id: "snw#{k}", d: d, transform: 'rotate(240)')
-        maken(pats, :path, id: "sne#{k}", d: d, transform: 'rotate(300)')
-          #
-          # hachures
+        maken(
+          pats, :path, class: c, id: "se#{k}", d: d)
+        maken(
+          pats, :path, class: c, id: "sse#{k}", d: d, transform: 'rotate(60)')
+        maken(
+          pats, :path, class: c, id: "ssw#{k}", d: d, transform: 'rotate(120)')
+        maken(
+          pats, :path, class: c, id: "sw#{k}", d: d, transform: 'rotate(180)')
+        maken(
+          pats, :path, class: c, id: "snw#{k}", d: d, transform: 'rotate(240)')
+        maken(
+          pats, :path, class: c, id: "sne#{k}", d: d, transform: 'rotate(300)')
+            #
+            # hachures
       end
 
       maken(pats, :path, # 1km hex
@@ -147,13 +154,6 @@ module Archelaus
             :use,
             href: '#h', class: cla, x: px, y: py, 'data-ll': point.to_data_ll)
 
-          if (
-            point.x % 10 == 0 && point.y % 20 == 0 ||
-            point.x % 10 == 5 && point.y % 20 == 10
-          ) then
-            maken(svg, :use, href: '#H', x: px, y: py)
-          end
-
           point.dks
             .each { |k, v| maken(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
               } if point.dks
@@ -179,6 +179,27 @@ module Archelaus
             #"#{point.ele.to_i} #{point.xy.join(',')}",
             class: k, x: px, y: py + R0 / 4
               ) if k
+        end
+      end
+
+      #
+      # draw kilometric hexes last (higher z)
+
+      g.rows.each do |row|
+
+        row.each do |point|
+
+          loff = loffs[point.y % 2]
+
+          px = loff + point.x * 100
+          py = point.y * 1.5 * R1
+
+          if (
+            point.x % 10 == 0 && point.y % 20 == 0 ||
+            point.x % 10 == 5 && point.y % 20 == 10
+          ) then
+            maken(svg, :use, href: '#H', x: px, y: py)
+          end
         end
       end
 

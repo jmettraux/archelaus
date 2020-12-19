@@ -7,48 +7,60 @@ body {
 
 svg text.t {
   font-size: 21;
-  color: black;
-  font-family: sans-serif; font-weight: bolder;
+  stroke: white;
+  fill: white;
+  font-family: sans-serif;
+  /*font-weight: bold;*/
   text-anchor: middle;
-  opacity: 0.08;
+  opacity: 1.0;
   user-select: none; }
 svg text.t.sl {
   font-size: 14;
-  color: lightgrey;
+  stroke: white;
 }
 svg text.t.mx {
   font-size: 28;
 }
 svg text.t.mn {
   font-size: 18;
-  color: lightgrey;
+  stroke: white;
 }
 
 use[href="#h"] {
   pointer-events: visible; } /* so that clicking on a hex targets that hex */
 use[href="#h"].g {
-  fill: none; stroke: lightgrey; stroke-width: 1; }
+  fill: #d5f5e3;
+  stroke: white;
+  stroke-width: 1; }
 use[href="#h"].s {
   fill: none; stroke: blue; stroke-width: 1; opacity: 0.2; }
 
-use[href="#sea"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#ssea"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswa"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swa"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwa"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#snea"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#seb"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#sseb"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswb"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swb"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwb"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#sneb"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#sec"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#ssec"] { fill: none; stroke-width: 1.2; stroke: black; }
-use[href="#sswc"] { fill: none; stroke-width: 1; stroke: black; }
-use[href="#swc"] { fill: none; stroke-width: 1; stroke: grey; }
-use[href="#snwc"] { fill: none; stroke-width: 0.8; stroke: grey; }
-use[href="#snec"] { fill: none; stroke-width: 1; stroke: grey; }
+:root { /* light in maps is set in the NW */
+  --sl-se-c: #0b5345;
+  --sl-nw-c: #eafaf1;
+  --sl-se-w: 1.2;
+  --sl-nw-w: 0.8;
+  --sl-s-w: 1.0;
+}
+path.slope { fill: none; }
+use[href="#sea"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#ssea"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#sswa"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#swa"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
+use[href="#snwa"]  { stroke-width: var(--sl-nw-w); stroke: var(--sl-nw-c); }
+use[href="#snea"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
+use[href="#seb"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#sseb"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#sswb"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#swb"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
+use[href="#snwb"]  { stroke-width: var(--sl-nw-w); stroke: var(--sl-nw-c); }
+use[href="#sneb"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
+use[href="#sec"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#ssec"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#sswc"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
+use[href="#swc"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
+use[href="#snwc"]  { stroke-width: var(--sl-nw-w); stroke: var(--sl-nw-c); }
+use[href="#snec"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
 
 use[href="#H"] {
   fill: none; stroke: lightgrey; stroke-width: 2; }
