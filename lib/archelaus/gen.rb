@@ -21,12 +21,14 @@ module Archelaus::Gen
 
   class Node
 
+    attr_reader :atts
+
     def initialize(*args)
 
       parent = nil
       @tag = nil
       @atts = nil
-      @children = []
+      @children = nil
 
       parent = args.shift if args[0].is_a?(Archelaus::Gen::Node)
       @tag = args.shift
@@ -39,9 +41,9 @@ module Archelaus::Gen
         if arg.is_a?(Hash)
           @atts ||= arg
         elsif arg.respond_to?(:write_to_io)
-          @children << arg
+          (@children ||= []) << arg
         else
-          @children << Archelaus::Gen::TextContent.new(arg)
+          (@children ||= []) << Archelaus::Gen::TextContent.new(arg)
         end
       end
 
@@ -50,7 +52,7 @@ module Archelaus::Gen
 
     def <<(node)
 
-      @children << node
+      (@children ||= []) << node
 
       node
     end

@@ -155,6 +155,8 @@ module Archelaus
       south = nil
       east = nil
 
+      shexes = {}
+
       g.rows.each do |row|
 
         row.each do |point|
@@ -168,10 +170,11 @@ module Archelaus
           south = py
 
           cla = point.ele == nil ? 's' : 'g'
-          make(
+          sh = make(
             svg,
             :use,
             href: '#h', class: cla, x: px, y: py, 'data-ll': point.to_data_ll)
+          shexes[point.xy] = sh
 
           point.dks
             .each { |k, v| make(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
@@ -217,6 +220,12 @@ module Archelaus
 
       g.features.lakes
         .each { |l| make_lake(svg, l) }
+
+      #
+      # flag woods
+
+      g.features.woods
+        .each { |w| flag_wood(shexes, w) }
 
       #
       # draw kilometric hexes last (higher z)
@@ -279,9 +288,8 @@ module Archelaus
       d = d.join(' ')
 
       k = "ww #{way.tags['waterway']}"
-      t = way.tags.collect { |k, v| "#{k}: #{v}" }.join(', ')
 
-      make(svg, :path, class: k, d: d, 'data-t': t)
+      make(svg, :path, class: k, d: d, 'data-t': way.t)
 
       seen.first
     end
@@ -351,11 +359,23 @@ module Archelaus
     def make_lake(svg, lake)
 
       k = "w #{lake.tags['water']}"
-      t = lake.tags.collect { |k, v| "#{k}: #{v}" }.join(', ')
+      t = lake.t
 
       lake.hexes.each do |h|
 
         make(svg, :circle, cx: h.sx, cy: h.sy, class: k, 'data-t': t)
+      end
+    end
+
+    def flag_wood(shexes, wood)
+
+      t = wood.t
+
+      wood.hexes.each do |h|
+
+        sh = shexes[h.xy]
+        sh.atts[:class] = "#{sh.atts[:class]} wo"
+        sh.atts[:'data-t'] = t
       end
     end
 

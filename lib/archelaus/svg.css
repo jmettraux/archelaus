@@ -35,6 +35,10 @@ use[href="#h"].g {
   fill: #d5f5e3;
   stroke: white;
   stroke-width: 2.8; }
+use[href="#h"].g.wo {
+  fill: #339900;
+  stroke: white;
+  stroke-width: 2.8; }
 use[href="#h"].s {
   fill: none;
   stroke: blue;

@@ -95,12 +95,27 @@ module Archelaus
         @ways.values.select { |w| w.tags['natural'] == 'water' }
     end
 
+    def woods
+
+      @woods ||=
+        @ways.values.select { |w|
+          w.tags['landuse'] == 'forest' ||
+          w.tags['natural'] == 'wood' }
+    end
+
     class Nwr
+      TAGS_TO_DISCARD = %w[ source ]
       attr_reader :dict, :data
       def initialize(dict, d); @dict = dict; @data = d; end
       def id; @data['id']; end
       def type; @data['type']; end
       def tags; @data['tags'] || {}; end
+      def t
+        tags
+          .reject { |k, _| TAGS_TO_DISCARD.include?(k) }
+          .collect { |k, v| "#{k}: #{v}" }
+          .join(', ')
+      end
       protected
       def grid; @dict.grid; end
     end
