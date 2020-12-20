@@ -1,7 +1,7 @@
 
 source 'https://rubygems.org'
 
-gem 'ox'
+#gem 'ox'
 
 gem 'rspec'
 

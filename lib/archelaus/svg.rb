@@ -28,17 +28,15 @@ module Archelaus
 
       g = compute_grid(lat, lon, step, width, height, origin)
       g.load_elevations
-      g.load_nodes
+      #g.load_nodes # TODO
 
-      doc = Ox::Document.new
-      html = maken(doc, :html)
-      head = maken(html, :head)
-      maken(head, :title, 'archelaus')
+      html = make(:html)
+      head = make(html, :head)
+      make(head, :title, 'archelaus')
 
-      maken(head, :style) <<
-        Ox::Raw.new(File.read(File.join(__dir__, 'svg.css')))
+      make(head, :style, wrapf(File.join(__dir__, 'svg.css')))
 
-      body = maken(html, :body)
+      body = make(html, :body)
 
       # unit is meter ;-)
       # from one hex to the next there is 100m
@@ -49,16 +47,16 @@ module Archelaus
       #viewbox = [ 8925, -689, 5000, 5000 ]
       viewbox = [ 0, 0, 2000, 2000 ]
 
-      svg = maken(body, :svg,
+      svg = make(body, :svg,
         id: 'svg-map',
         viewBox: viewbox.collect(&:to_s).join(' '),
         preserveAspectRatio: 'xMinYMin slice',
         xmlns: 'http://www.w3.org/2000/svg',
         width: '100%', height: '100%')
 
-      pats = maken(svg, :g, id: 'patterns')
+      pats = make(svg, :g, id: 'patterns')
 
-      maken(pats, :path, # 100m hex
+      make(pats, :path, # 100m hex
         id: 'h',
         d:
           "M 0 #{-R1}" +
@@ -82,23 +80,23 @@ module Archelaus
           .join(' ')
         c = 'slope'
 
-        maken(
+        make(
           pats, :path, class: c, id: "se#{k}", d: d)
-        maken(
+        make(
           pats, :path, class: c, id: "sse#{k}", d: d, transform: 'rotate(60)')
-        maken(
+        make(
           pats, :path, class: c, id: "ssw#{k}", d: d, transform: 'rotate(120)')
-        maken(
+        make(
           pats, :path, class: c, id: "sw#{k}", d: d, transform: 'rotate(180)')
-        maken(
+        make(
           pats, :path, class: c, id: "snw#{k}", d: d, transform: 'rotate(240)')
-        maken(
+        make(
           pats, :path, class: c, id: "sne#{k}", d: d, transform: 'rotate(300)')
             #
             # hachures
       end
 
-      maken(pats, :path, # 1km hex
+      make(pats, :path, # 1km hex
         id: 'H',
         d:
           "M 0 #{-R1 * 10}" +
@@ -155,13 +153,13 @@ module Archelaus
           south = py
 
           cla = point.ele == nil ? 's' : 'g'
-          maken(
+          make(
             svg,
             :use,
             href: '#h', class: cla, x: px, y: py, 'data-ll': point.to_data_ll)
 
           point.dks
-            .each { |k, v| maken(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
+            .each { |k, v| make(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
               } if point.dks
 
           k =
@@ -177,7 +175,7 @@ module Archelaus
               nil
             end
 
-          maken(svg, :text,
+          make(svg, :text,
             point.ele.to_i.to_s,
             #point.ele.to_i.to_s + 'm',
             #point.ele.to_fixed1,
@@ -204,7 +202,7 @@ module Archelaus
             (point.x % 10 == 5 && point.y % 20 == 6) ||
             (point.x > 0 && point.x % 10 == 0 && point.y % 20 == 16)
           ) then
-            maken(svg, :use, href: '#H', x: px, y: py)
+            make(svg, :use, href: '#H', x: px, y: py)
           end
         end
       end
@@ -212,41 +210,29 @@ module Archelaus
       east = east.to_i + 50
       south = south.to_i + 50
         #
-      maken(body, :script) << %{
-        window._east = #{east};
-        window._south = #{south}; }
+      make(body, :script, "window._east = #{east}; window._south = #{south};")
 
-      menu = maken(body, :div, { id: 'menu' })
-      maken(menu, :div, { class: 'latlon' }, '0.0 0.0')
-      maken(menu, :div, { class: 'elevation' }, '0.0m')
-      nav = maken(menu, :div, { class: 'nav' })
+      menu = make(body, :div, { id: 'menu' })
+      make(menu, :div, { class: 'latlon' }, '0.0 0.0')
+      make(menu, :div, { class: 'elevation' }, '0.0m')
+      nav = make(menu, :div, { class: 'nav' })
 
-      maken(nav, :span, { class: 'nw' }, 'NW')
-      maken(nav, :span, { class: 'ne' }, 'NE')
-      maken(nav, :span, { class: 'c' }, 'C')
-      maken(nav, :span, { class: 'sw' }, 'SW')
-      maken(nav, :span, { class: 'se' }, 'SE')
+      make(nav, :span, { class: 'nw' }, 'NW')
+      make(nav, :span, { class: 'ne' }, 'NE')
+      make(nav, :span, { class: 'c' }, 'C')
+      make(nav, :span, { class: 'sw' }, 'SW')
+      make(nav, :span, { class: 'se' }, 'SE')
 
-      maken(body, :script) <<
-        Ox::Raw.new(File.read(File.join(__dir__, 'svg.js')))
+      make(body, :script, wrapf(File.join(__dir__, 'svg.js')))
 
-      Ox.dump(doc)
+      puts(html.to_s)
     end
 
     protected
 
-    def maken(parent, tag, text=nil, atts={})
-
-      text, atts = atts, text if text.is_a?(Hash)
-
-      e = Ox::Element.new(tag.to_s)
-      atts.each { |k, v| e[k] = v }
-      e << text if text && text.is_a?(String)
-
-      parent << e
-
-      e
-    end
+    def make(*args); Archelaus::Gen.make(*args); end
+    def wrapt(text); Archelaus::Gen.wrapt(text); end
+    def wrapf(path); Archelaus::Gen.wrapf(path); end
   end
 end
 
