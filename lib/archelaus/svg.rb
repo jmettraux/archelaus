@@ -266,11 +266,12 @@ module Archelaus
       hs = way.hexes.sort_by { |h| h.ele }
       seen, d = draw_waterway_segment(hs.shift, hs, [], [])
       d = d.join(' ')
-#STDERR.puts d.inspect
 
       k = "ww #{way.tags['waterway']}"
 
       make(svg, :path, class: k, d: d)
+
+      reconnect_waterway(svg, seen.first)
     end
 
     def draw_waterway_segment(hex, hexes, seen, r)
@@ -300,6 +301,25 @@ module Archelaus
       end
 
       [ seen, r ]
+    end
+
+    def reconnect_waterway(svg, lowest_hex)
+
+      dirs = lowest_hex.dirs.values.reverse
+
+      if sea = dirs.find { |d| d && d.ele == nil }
+        make(
+          svg, :path,
+          class: 'ww mouth',
+          d: "M #{lowest_hex.sx} #{lowest_hex.sy} L #{sea.sx} #{sea.sy}")
+      else
+rp [ :nosea, dirs.collect { |d| d && d.ele } ]
+      end
+    end
+
+    def rp(*args)
+      if args.count == 1; STDERR.puts(args.first.inspect);
+      else; STDERR.puts(args.inspect); end
     end
   end
 end
