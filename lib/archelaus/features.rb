@@ -109,7 +109,18 @@ module Archelaus
       end
       def hexes
         @hexes ||=
-          nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact
+          filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
+      end
+      protected
+      def filter(hexes)
+        if tags['waterway']
+          filter_waterway(hexes)
+        else
+          hexes
+        end
+      end
+      def filter_waterway(hexes)
+        hexes.reject { |h| h.ele == nil }
       end
     end
     class Relation < Nwr

@@ -194,15 +194,7 @@ module Archelaus
       # draw waterways
 
       g.features.waterways.each do |w|
-        #w.nodes.each do |n|
-        #  p [ n.lat, n.lon ]
-        #  p g.locate(n.lat, n.lon).latlon
-        #  p g.locate(n.lat, n.lon)
-        #end
-        next if w.hexes.count < 2
-#p [ 'count', 'nodes', w.nodes.count, 'hexes', w.hexes.count ]
-#p w.tags
-        send("make_#{w.tags['waterway']}", svg, w)
+        make_waterway(svg, w)
       end
 #exit 0
 
@@ -258,11 +250,9 @@ module Archelaus
     def wrapt(text); Archelaus::Gen.wrapt(text); end
     def wrapf(path); Archelaus::Gen.wrapf(path); end
 
-    def make_stream(svg, way)
-      make_path(svg, way, 'ww stream')
-    end
-    def make_river(svg, way)
-      make_path(svg, way, 'ww river')
+    def make_waterway(svg, way)
+
+      make_path(svg, way, "ww #{way.tags['waterway']}")
     end
 
     def make_path(svg, way, klass)

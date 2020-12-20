@@ -98,13 +98,13 @@ use[href="#H"] {
 
 path.ww {
   fill: none;
-  stroke: blue;
+  stroke: #0033ff;
 }
 path.river {
-  stroke-width: 4.2;
+  stroke-width: 8.4;
 }
 path.stream {
-  stroke-width: 2.1;
+  stroke-width: 4.2;
 }
 
 /*
