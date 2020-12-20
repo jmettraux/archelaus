@@ -11,6 +11,9 @@ module Archelaus
     #point.el = point.ele ? (point.ele / 10).round : -1
     def el; @el ||= (self.ele ? (self.ele / 10).round : -1); end
 
+    def sxsy; [ @sx, @sy ]; end
+    def sx_sy; "#{@sx} #{@sy}"; end
+
     def to_data_ll
 
       "#{lat.to_fixed5} #{lon.to_fixed5} #{ele ? ele.to_fixed1 : 's'}"
@@ -271,7 +274,7 @@ module Archelaus
 
       make(svg, :path, class: k, d: d)
 
-      reconnect_waterway(svg, seen.first)
+      reconnect_waterway(svg, k, seen.first)
     end
 
     def draw_waterway_segment(hex, hexes, seen, r)
@@ -303,16 +306,26 @@ module Archelaus
       [ seen, r ]
     end
 
-    def reconnect_waterway(svg, lowest_hex)
+    def reconnect_waterway(svg, klass, lowest_hex)
 
       dirs = lowest_hex.dirs.values.reverse
 
       if sea = dirs.find { |d| d && d.ele == nil }
+
+        wx, wy = lowest_hex.sxsy
+
+        bearing = Archelaus.compute_bearing(lowest_hex.latlon, sea.latlon) - 90
+        dx = 50 * Math.cos(bearing.to_rad)
+        dy = 50 * Math.sin(bearing.to_rad)
+#rp [ :bearing, bearing.to_i, dx, dy ]
+
         make(
           svg, :path,
-          class: 'ww mouth',
-          d: "M #{lowest_hex.sx} #{lowest_hex.sy} L #{sea.sx} #{sea.sy}")
+          #class: 'ww mouth', d: "M #{lowest_hex.sx_sy} L #{sea.sx_sy}")
+          class: klass + ' mouth',
+          d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
       else
+
 rp [ :nosea, dirs.collect { |d| d && d.ele } ]
       end
     end
