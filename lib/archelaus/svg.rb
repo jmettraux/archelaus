@@ -5,6 +5,7 @@ module Archelaus
 
     attr_accessor :dks
     attr_accessor :sx, :sy
+    attr_accessor :waterway
 
     #attr_accessor :el, :elev
     #point.elev = point.ele ? (point.ele * 100).to_i : -100
@@ -206,9 +207,10 @@ module Archelaus
       #
       # draw waterways
 
-      g.features.waterways.each do |w|
-        make_waterway(svg, w)
-      end
+      sinks = g.features.waterways
+        .collect { |w| make_waterway(svg, w) }
+      g.features.waterways.zip(sinks)
+        .each { |w, s| reconnect_waterway(svg, "ww #{w.tags['waterway']}", s) }
 #exit 0
 
       #
@@ -274,7 +276,7 @@ module Archelaus
 
       make(svg, :path, class: k, d: d)
 
-      reconnect_waterway(svg, k, seen.first)
+      seen.first
     end
 
     def draw_waterway_segment(hex, hexes, seen, r)
@@ -282,6 +284,7 @@ module Archelaus
 #STDERR.puts [ :hex, hex.ele ].inspect
 #STDERR.puts [ :hexes, hexes.collect(&:ele) ].inspect
       seen << hex
+      hex.waterway = true
 
       dirs = hex.dirs.values
       h1s = hexes.select { |h| dirs.include?(h) }
@@ -321,12 +324,20 @@ module Archelaus
 
         make(
           svg, :path,
-          #class: 'ww mouth', d: "M #{lowest_hex.sx_sy} L #{sea.sx_sy}")
           class: klass + ' mouth',
           d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
       else
 
-rp [ :nosea, dirs.collect { |d| d && d.ele } ]
+        dirs = dirs
+          .select { |d| d && d.ele && d.ele < lowest_hex.ele }
+          .sort_by(&:ele)
+#rp [ :nos, dirs ]
+        h =
+          dirs.select { |d| d.waterway }.first# ||
+          #dirs.first
+        make(
+          svg, :path,
+          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{h.sx_sy}") if h
       end
     end
 
