@@ -5,6 +5,26 @@ body {
   margin: 0;
   padding: 0; }
 
+/*
+ * lightgreen: #90ee90
+ */
+
+:root {
+
+  /* light in maps is set in the NW */
+  --sl-se-c: #a0a0a0;
+  --sl-nw-c: #28B463;
+  --sl-se-w: 6.3;
+  --sl-nw-w: 2.1;
+  --sl-s-w: 1.4;
+
+  --ground-c: #d5f5e3;
+  --wood-c: #80ee80;
+  --sea-c: blue;
+  --water-c: lightblue;
+  --waterway-c: #0033ff;
+}
+
 svg text.t {
   font-size: 21;
   stroke: white;
@@ -32,26 +52,19 @@ svg text.t.mn {
 use[href="#h"] {
   pointer-events: visible; } /* so that clicking on a hex targets that hex */
 use[href="#h"].g {
-  fill: #d5f5e3;
+  fill: var(--ground-c);
   stroke: white;
   stroke-width: 2.8; }
 use[href="#h"].g.wo {
-  fill: #339900;
+  fill: var(--wood-c);
   stroke: white;
   stroke-width: 2.8; }
 use[href="#h"].s {
   fill: none;
-  stroke: blue;
+  stroke: var(--sea-c);
   stroke-width: 1;
   opacity: 0.2; }
 
-:root { /* light in maps is set in the NW */
-  --sl-se-c: #a0a0a0;
-  --sl-nw-c: #28B463;
-  --sl-se-w: 6.3;
-  --sl-nw-w: 2.1;
-  --sl-s-w: 1.4;
-}
 path.slope { fill: none; }
 use[href="#sea"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
 use[href="#ssea"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
@@ -102,7 +115,7 @@ use[href="#H"] {
 
 path.ww {
   fill: none;
-  stroke: #0033ff;
+  stroke: var(--waterway-c);
 }
 path.river {
   stroke-width: 8.4;
@@ -113,7 +126,7 @@ path.stream {
 path.ww.mouth {
 }
 circle.w {
-  fill: lightblue;
+  fill: var(--water-c);
 }
 circle.w.pond {
   r: 14;
