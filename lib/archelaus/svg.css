@@ -108,6 +108,15 @@ path.stream {
 }
 path.ww.mouth {
 }
+circle.w {
+  fill: lightblue;
+}
+circle.w.pond {
+  r: 14;
+}
+circle.w.lake {
+  r: 28;
+}
 
 /*
 .hidden { display: none; }

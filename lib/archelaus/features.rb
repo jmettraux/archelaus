@@ -89,6 +89,12 @@ module Archelaus
         @ways.values.select { |w| w.tags.keys.include?('waterway') }
     end
 
+    def lakes
+
+      @lakes ||=
+        @ways.values.select { |w| w.tags['natural'] == 'water' }
+    end
+
     class Nwr
       attr_reader :dict, :data
       def initialize(dict, d); @dict = dict; @data = d; end

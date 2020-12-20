@@ -211,7 +211,12 @@ module Archelaus
         .collect { |w| make_waterway(svg, w) }
       g.features.waterways.zip(sinks)
         .each { |w, s| reconnect_waterway(svg, "ww #{w.tags['waterway']}", s) }
-#exit 0
+
+      #
+      # draw ponds and lakes
+
+      g.features.lakes
+        .each { |l| make_lake(svg, l) }
 
       #
       # draw kilometric hexes last (higher z)
@@ -246,6 +251,7 @@ module Archelaus
       menu = make(body, :div, { id: 'menu' })
       make(menu, :div, { class: 'latlon' }, '0.0 0.0')
       make(menu, :div, { class: 'elevation' }, '0.0m')
+      make(menu, :div, { class: 'text' }, '')
       nav = make(menu, :div, { class: 'nav' })
 
       make(nav, :span, { class: 'nw' }, 'NW')
@@ -273,8 +279,9 @@ module Archelaus
       d = d.join(' ')
 
       k = "ww #{way.tags['waterway']}"
+      t = way.tags.collect { |k, v| "#{k}: #{v}" }.join(', ')
 
-      make(svg, :path, class: k, d: d)
+      make(svg, :path, class: k, d: d, 'data-t': t)
 
       seen.first
     end
@@ -341,7 +348,19 @@ module Archelaus
       end
     end
 
+    def make_lake(svg, lake)
+
+      k = "w #{lake.tags['water']}"
+      t = lake.tags.collect { |k, v| "#{k}: #{v}" }.join(', ')
+
+      lake.hexes.each do |h|
+
+        make(svg, :circle, cx: h.sx, cy: h.sy, class: k, 'data-t': t)
+      end
+    end
+
     def rp(*args)
+
       if args.count == 1; STDERR.puts(args.first.inspect);
       else; STDERR.puts(args.inspect); end
     end
