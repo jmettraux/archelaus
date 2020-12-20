@@ -252,21 +252,44 @@ module Archelaus
 
     def make_waterway(svg, way)
 
-      make_path(svg, way, "ww #{way.tags['waterway']}")
+      #make_path(svg, way, "ww #{way.tags['waterway']}")
+      hs = way.hexes.sort_by { |h| h.ele }
+      d = draw_waterway_segment(hs.shift, hs, [])
+      d = d.join(' ')
+#STDERR.puts d.inspect
+
+      k = "ww #{way.tags['waterway']}"
+
+      make(svg, :path, class: k, d: d)
     end
 
-    def make_path(svg, way, klass)
+    def draw_waterway_segment(hex, hexes, r)
 
-      start = way.hexes.first
-      hexes = way.hexes[1..-1]
-
-      d = "M #{start.sx} #{start.sy}"
-      hexes.each do |h|
-        d = d + " L #{h.sx} #{h.sy}"
-      end
-
-      make(svg, :path, class: klass, d: d)
+#STDERR.puts [ :hex, hex.ele ].inspect
+#STDERR.puts [ :hexes, hexes.collect(&:ele) ].inspect
+      dirs = hex.dirs.values
+      h1s = hexes.select { |h| dirs.include?(h) }
+      h1s.each { |hh|
+        r << "M #{hex.sx} #{hex.sy} L #{hh.sx} #{hh.sy}"
+        hexes.delete(hh) }
+      h1s.each { |hh|
+        draw_waterway_segment(hh, hexes, r) if hexes.any? }
+#STDERR.puts [ :hexes1, hexes.collect(&:ele) ].inspect if h1s.empty? && hexes.any?
+      r
     end
+
+#    def make_path(svg, way, klass)
+#
+#      start = way.hexes.first
+#      hexes = way.hexes[1..-1]
+#
+#      d = "M #{start.sx} #{start.sy}"
+#      hexes.each do |h|
+#        d = d + " L #{h.sx} #{h.sy}"
+#      end
+#
+#      make(svg, :path, class: klass, d: d)
+#    end
   end
 end
 
