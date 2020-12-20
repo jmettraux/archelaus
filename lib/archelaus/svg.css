@@ -96,6 +96,17 @@ use[href="#H"] {
   cursor: pointer;
 }
 
+path.ww {
+  fill: none;
+  stroke: blue;
+}
+path.river {
+  stroke-width: 4.2;
+}
+path.stream {
+  stroke-width: 2.1;
+}
+
 /*
 .hidden { display: none; }
 */

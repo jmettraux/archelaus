@@ -4,6 +4,7 @@ module Archelaus
   class Point
 
     attr_accessor :dks
+    attr_accessor :sx, :sy
 
     #attr_accessor :el, :elev
     #point.elev = point.ele ? (point.ele * 100).to_i : -100
@@ -162,6 +163,9 @@ module Archelaus
             .each { |k, v| make(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
               } if point.dks
 
+          point.sx = px
+          point.sy = py
+
           k =
             if ! point.dks
               nil
@@ -189,19 +193,18 @@ module Archelaus
       #
       # draw waterways
 
-# TODO
-#      g.features.waterways.each do |w|
-#        #w.nodes.each do |n|
-#        #  p [ n.lat, n.lon ]
-#        #  p g.locate(n.lat, n.lon).latlon
-#        #  p g.locate(n.lat, n.lon)
-#        #end
+      g.features.waterways.each do |w|
+        #w.nodes.each do |n|
+        #  p [ n.lat, n.lon ]
+        #  p g.locate(n.lat, n.lon).latlon
+        #  p g.locate(n.lat, n.lon)
+        #end
+        next if w.hexes.count < 2
 #p [ 'count', 'nodes', w.nodes.count, 'hexes', w.hexes.count ]
-#        w.hexes.each do |h|
-#          p h
-#        end
+#p w.tags
+        send("make_#{w.tags['waterway']}", svg, w)
+      end
 #exit 0
-#      end
 
       #
       # draw kilometric hexes last (higher z)
@@ -254,6 +257,26 @@ module Archelaus
     def make(*args); Archelaus::Gen.make(*args); end
     def wrapt(text); Archelaus::Gen.wrapt(text); end
     def wrapf(path); Archelaus::Gen.wrapf(path); end
+
+    def make_stream(svg, way)
+      make_path(svg, way, 'ww stream')
+    end
+    def make_river(svg, way)
+      make_path(svg, way, 'ww river')
+    end
+
+    def make_path(svg, way, klass)
+
+      start = way.hexes.first
+      hexes = way.hexes[1..-1]
+
+      d = "M #{start.sx} #{start.sy}"
+      hexes.each do |h|
+        d = d + " L #{h.sx} #{h.sy}"
+      end
+
+      make(svg, :path, class: klass, d: d)
+    end
   end
 end
 
