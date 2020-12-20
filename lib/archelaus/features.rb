@@ -35,10 +35,12 @@ module Archelaus
 
   class Grid
 
+    attr_reader :features
+
     def load_features
 
       d = JSON.parse(File.read(features_path)) rescue nil; return unless d
-      @features = Archelaus::FeatureDict.new(d)
+      @features = Archelaus::FeatureDict.new(self, d)
     end
 
     protected
@@ -53,9 +55,12 @@ module Archelaus
 
   class FeatureDict
 
+    attr_reader :grid
     attr_reader :nodes, :ways, :relations
 
-    def initialize(data)
+    def initialize(grid, data)
+
+      @grid = grid
 
       @nodes = {}
       @ways = {}
@@ -90,13 +95,22 @@ module Archelaus
       def id; @data['id']; end
       def type; @data['type']; end
       def tags; @data['tags'] || {}; end
+      protected
+      def grid; @dict.grid; end
     end
     class Node < Nwr
       def lat; @data['lat']; end
       def lon; @data['lon']; end
     end
     class Way < Nwr
-      def nodes; @nodes ||= @data['nodes'].collect { |i| dict.node(i) }; end
+      def nodes
+        @nodes ||=
+          @data['nodes'].collect { |i| dict.node(i) }
+      end
+      def hexes
+        @hexes ||=
+          nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact
+      end
     end
     class Relation < Nwr
     end

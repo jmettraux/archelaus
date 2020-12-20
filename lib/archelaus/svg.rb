@@ -187,6 +187,23 @@ module Archelaus
       end
 
       #
+      # draw waterways
+
+# TODO
+#      g.features.waterways.each do |w|
+#        #w.nodes.each do |n|
+#        #  p [ n.lat, n.lon ]
+#        #  p g.locate(n.lat, n.lon).latlon
+#        #  p g.locate(n.lat, n.lon)
+#        #end
+#p [ 'count', 'nodes', w.nodes.count, 'hexes', w.hexes.count ]
+#        w.hexes.each do |h|
+#          p h
+#        end
+#exit 0
+#      end
+
+      #
       # draw kilometric hexes last (higher z)
 
       g.rows.each do |row|
@@ -197,6 +214,10 @@ module Archelaus
 
           px = loff + point.x * 100
           py = point.y * 1.5 * R1
+#p [
+#  point.x, px, point.lon, '->', px / point.lon,
+#  point.x > 0 ? (px / point.lon / point.x) : nil
+#    ] if loff == 0
 
           if (
             (point.x % 10 == 5 && point.y % 20 == 6) ||
