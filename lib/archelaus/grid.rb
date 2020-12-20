@@ -92,8 +92,11 @@ module Archelaus
   class Grid
 
     attr_reader :origin, :rows
+    attr_reader :origin_corner
 
     def initialize(origin, rows)
+
+      @origin_corner = rows[0][0]
 
       rows.reverse! if rows[0][0].lat < rows[-1][0].lat
       rows.each { |r| r.reverse! } if rows[0][0].lon > rows[0][-1].lon

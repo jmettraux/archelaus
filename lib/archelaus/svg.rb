@@ -28,7 +28,7 @@ module Archelaus
 
       g = compute_grid(lat, lon, step, width, height, origin)
       g.load_elevations
-      #g.load_nodes # TODO
+      g.load_features
 
       html = make(:html)
       head = make(html, :head)

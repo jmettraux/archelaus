@@ -3,7 +3,7 @@
 #
 # fetche
 #
-# for fetch elevation
+# for "fetch elevations"
 #
 
 $: << File.join(__dir__, '../lib')

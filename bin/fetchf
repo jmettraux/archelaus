@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 #
-# fetchn
+# fetchf
 #
-# for fetch nodes
+# for "fetch features"
 #
 
 $: << File.join(__dir__, '../lib')
@@ -32,5 +32,5 @@ grid = Archelaus.compute_grid(
   wid, hei,
   corner.downcase.to_sym)
 
-Archelaus.fetch_nodes(grid)
+Archelaus.fetch_features(grid)
 

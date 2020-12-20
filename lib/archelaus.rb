@@ -81,6 +81,6 @@ require 'archelaus/gen'
 require 'archelaus/svg'
 require 'archelaus/http'
 require 'archelaus/grid'
-require 'archelaus/nodes'
+require 'archelaus/features'
 require 'archelaus/elevations'
 
