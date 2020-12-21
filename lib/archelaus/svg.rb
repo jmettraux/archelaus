@@ -305,7 +305,7 @@ module Archelaus
       hex.waterway = true
 
       dirs = hex.dirs.values
-      h1s = hexes.select { |h| dirs.include?(h) }
+      h1s = hexes.select { |h| dirs.include?(h) && hex.ele < h.ele }
 
       h1s.each do |hh|
         r << "M #{hex.sx} #{hex.sy} L #{hh.sx} #{hh.sy}"
