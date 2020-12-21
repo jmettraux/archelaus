@@ -5,7 +5,7 @@ module Archelaus
 
     attr_accessor :dks
     attr_accessor :sx, :sy
-    attr_accessor :waterway
+    attr_accessor :waterways
 
     #attr_accessor :el, :elev
     #point.elev = point.ele ? (point.ele * 100).to_i : -100
@@ -213,9 +213,11 @@ module Archelaus
       # draw waterways
 
       sinks = g.features.waterways
-        .collect { |w| make_waterway(svg, w) }
+        .collect { |w|
+          make_waterway(svg, w) }
       g.features.waterways.zip(sinks)
-        .each { |w, s| reconnect_waterway(svg, "ww #{w.tags['waterway']}", s) }
+        .each { |w, s|
+          reconnect_waterway(w, svg, "ww #{w.tags['waterway']}", s) }
 
       #
       # draw ponds and lakes
@@ -287,7 +289,7 @@ module Archelaus
 
       #make_path(svg, way, "ww #{way.tags['waterway']}")
       hs = way.hexes.sort_by { |h| h.ele }
-      seen, d = draw_waterway_segment(hs.shift, hs, [], [])
+      seen, d = draw_waterway_segment(way, hs.shift, hs, [], [])
       d = d.join(' ')
 
       k = "ww #{way.tags['waterway']}"
@@ -297,12 +299,13 @@ module Archelaus
       seen.first
     end
 
-    def draw_waterway_segment(hex, hexes, seen, r)
+    def draw_waterway_segment(way, hex, hexes, seen, r)
 
 #STDERR.puts [ :hex, hex.ele ].inspect
 #STDERR.puts [ :hexes, hexes.collect(&:ele) ].inspect
       seen << hex
-      hex.waterway = true
+      (hex.waterways ||= Set.new) << way
+rp hex.waterways.count
 
       dirs = hex.dirs.values
       h1s = hexes.select { |h| dirs.include?(h) && hex.ele < h.ele }
@@ -312,7 +315,7 @@ module Archelaus
         hexes.delete(hh)
       end
       h1s.each do |hh|
-        draw_waterway_segment(hh, hexes, seen, r) if hexes.any?
+        draw_waterway_segment(way, hh, hexes, seen, r) if hexes.any?
       end
       if h1s.empty? && hexes.any?
 #STDERR.puts [ :hexes1, hexes.collect(&:ele) ].inspect
@@ -321,13 +324,13 @@ module Archelaus
 #STDERR.puts h2.inspect
 #STDERR.puts h1.inspect
         r << "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}"
-        draw_waterway_segment(h2, hexes, seen, r)
+        draw_waterway_segment(way, h2, hexes, seen, r)
       end
 
       [ seen, r ]
     end
 
-    def reconnect_waterway(svg, klass, lowest_hex)
+    def reconnect_waterway(way, svg, klass, lowest_hex)
 
       dirs = lowest_hex.dirs.values.reverse
 
@@ -346,16 +349,17 @@ module Archelaus
           d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
       else
 
-        dirs = dirs
-          .select { |d| d && d.ele && d.ele < lowest_hex.ele }
-          .sort_by(&:ele)
-#rp [ :nos, dirs ]
-        h =
-          dirs.select { |d| d.waterway }.first# ||
-          #dirs.first
-        make(
-          svg, :path,
-          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{h.sx_sy}") if h
+#        dirs = dirs
+#          .select { |d| d && d.ele && d.ele < lowest_hex.ele }
+#          .sort_by(&:ele)
+##rp [ :nos, dirs ]
+#        h =
+#          dirs.select { |d| d.waterways }.first# ||
+#          #dirs.select { |d| d.waterways && ! d.waterways.include?(way) }.first# ||
+#          #dirs.first
+#        make(
+#          svg, :path,
+#          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{h.sx_sy}") if h
       end
     end
 

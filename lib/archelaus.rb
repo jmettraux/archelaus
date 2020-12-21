@@ -1,5 +1,6 @@
 
 require 'cgi'
+require 'set'
 require 'json'
 require 'net/http'
 

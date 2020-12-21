@@ -135,6 +135,10 @@ circle.w.lake {
   r: 28;
 }
 
+path.ww.conn {
+  stroke: red;
+}
+
 /*
 .hidden { display: none; }
 */
