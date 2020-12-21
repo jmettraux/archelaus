@@ -15,6 +15,8 @@ module Archelaus
     def sxsy; [ @sx, @sy ]; end
     def sx_sy; "#{@sx} #{@sy}"; end
 
+    def xye; [ xy, ele ]; end
+
     def to_data_ll
 
       "#{x},#{y}" +
@@ -31,6 +33,8 @@ module Archelaus
 
       pt ? pt[1] : nil
     end
+
+    def wwc; (@waterways || []).count; end
   end
 
   class << self
@@ -287,8 +291,10 @@ module Archelaus
 
     def make_waterway(svg, way)
 
-      #make_path(svg, way, "ww #{way.tags['waterway']}")
+      way.hexes.each { |h| (h.waterways ||= Set.new) << way }
+
       hs = way.hexes.sort_by { |h| h.ele }
+
       seen, d = draw_waterway_segment(way, hs.shift, hs, [], [])
       d = d.join(' ')
 
@@ -301,11 +307,7 @@ module Archelaus
 
     def draw_waterway_segment(way, hex, hexes, seen, r)
 
-#STDERR.puts [ :hex, hex.ele ].inspect
-#STDERR.puts [ :hexes, hexes.collect(&:ele) ].inspect
       seen << hex
-      (hex.waterways ||= Set.new) << way
-rp hex.waterways.count
 
       dirs = hex.dirs.values
       h1s = hexes.select { |h| dirs.include?(h) && hex.ele < h.ele }
@@ -318,11 +320,8 @@ rp hex.waterways.count
         draw_waterway_segment(way, hh, hexes, seen, r) if hexes.any?
       end
       if h1s.empty? && hexes.any?
-#STDERR.puts [ :hexes1, hexes.collect(&:ele) ].inspect
         h2 = hexes.shift
         h1 = h2.closest(seen)
-#STDERR.puts h2.inspect
-#STDERR.puts h1.inspect
         r << "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}"
         draw_waterway_segment(way, h2, hexes, seen, r)
       end
@@ -331,6 +330,8 @@ rp hex.waterways.count
     end
 
     def reconnect_waterway(way, svg, klass, lowest_hex)
+
+#make(svg, :circle, cx: lowest_hex.sx, cy: lowest_hex.sy, r: 7, fill: 'red', class: 'lh')
 
       dirs = lowest_hex.dirs.values.reverse
 
@@ -341,26 +342,37 @@ rp hex.waterways.count
         bearing = Archelaus.compute_bearing(lowest_hex.latlon, sea.latlon) - 90
         dx = 50 * Math.cos(bearing.to_rad)
         dy = 50 * Math.sin(bearing.to_rad)
-#rp [ :bearing, bearing.to_i, dx, dy ]
 
         make(
           svg, :path,
           class: klass + ' mouth',
           d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
-      else
 
-#        dirs = dirs
-#          .select { |d| d && d.ele && d.ele < lowest_hex.ele }
-#          .sort_by(&:ele)
-##rp [ :nos, dirs ]
-#        h =
-#          dirs.select { |d| d.waterways }.first# ||
-#          #dirs.select { |d| d.waterways && ! d.waterways.include?(way) }.first# ||
-#          #dirs.first
-#        make(
-#          svg, :path,
-#          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{h.sx_sy}") if h
+        return # way is connected to the sea now, over.
       end
+
+      dh = dirs
+        .select { |d| d && d.ele < lowest_hex.ele }
+        .sort_by(&:ele)
+        .find { |d| d.waterways && ! d.waterways.include?(way) }
+      if dh
+        make(
+          svg, :path,
+          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")
+          (dh.waterways ||= Set.new) << way
+        return
+      end
+
+#if lowest_hex.xy == [ 49, 44 ]
+#  rp '---'
+#  rp lowest_hex.xye
+#  dirs.each do |d|
+#    rp [ d.xye, d.wwc ]
+#  end
+#end
+      #make(
+      #  svg, :circle,
+      #  cx: lowest_hex.sx, cy: lowest_hex.sy, r: 10, class: 'lh')
     end
 
     def make_lake(svg, lake)
