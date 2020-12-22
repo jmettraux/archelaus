@@ -66,7 +66,8 @@ module Archelaus
       #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
       #viewbox = [ 0, 0, 5000, 5000 ]
       #viewbox = [ 8925, -689, 5000, 5000 ]
-      viewbox = [ 0, 0, 2000, 2000 ]
+      #viewbox = [ 0, 0, 2000, 2000 ]
+      viewbox = [ -100, -100, 8000, 8000 ]
 
       svg = make(body, :svg,
         id: 'svg-map',
