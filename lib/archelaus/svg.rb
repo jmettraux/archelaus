@@ -275,7 +275,7 @@ module Archelaus
 
       make(
         body,
-        :div, { id: 'help' },
+        :div, { id: 'help', style: 'display: none;' },
         wrapf(File.join(__dir__, 'svg_help.html')))
 
       make(nav, :span, { class: 'nw' }, 'NW')
