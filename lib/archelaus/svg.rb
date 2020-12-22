@@ -273,6 +273,11 @@ module Archelaus
       make(menu, :div, { class: 'text' }, 'hex')
       nav = make(menu, :div, { class: 'nav' })
 
+      make(
+        body,
+        :div, { id: 'help' },
+        wrapf(File.join(__dir__, 'svg_help.html')))
+
       make(nav, :span, { class: 'nw' }, 'NW')
       make(nav, :span, { class: 'ne' }, 'NE')
       make(nav, :span, { class: 'c' }, 'C')
