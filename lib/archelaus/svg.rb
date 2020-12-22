@@ -277,6 +277,8 @@ module Archelaus
       make(nav, :span, { class: 'c' }, 'C')
       make(nav, :span, { class: 'sw' }, 'SW')
       make(nav, :span, { class: 'se' }, 'SE')
+      make(nav, :span, { class: 'zall' }, 'zall')
+      make(nav, :span, { class: 'z1km' }, 'z1km')
 
       make(body, :script, wrapf(File.join(__dir__, 'svg.js')))
 
