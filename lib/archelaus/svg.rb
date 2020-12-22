@@ -269,7 +269,7 @@ module Archelaus
       make(menu, :div, { class: 'xy' }, '0, 0')
       make(menu, :div, { class: 'latlon' }, '0.0 0.0')
       make(menu, :div, { class: 'elevation' }, '0.0m')
-      make(menu, :div, { class: 'text' }, '')
+      make(menu, :div, { class: 'text' }, 'hex')
       nav = make(menu, :div, { class: 'nav' })
 
       make(nav, :span, { class: 'nw' }, 'NW')
