@@ -400,12 +400,6 @@ module Archelaus
         sh.atts[:'data-t'] = t
       end
     end
-
-    def rp(*args)
-
-      if args.count == 1; STDERR.puts(args.first.inspect);
-      else; STDERR.puts(args.inspect); end
-    end
   end
 end
 

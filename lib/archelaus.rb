@@ -85,3 +85,12 @@ require 'archelaus/grid'
 require 'archelaus/features'
 require 'archelaus/elevations'
 
+
+# accessible from anywhere
+#
+def rp(*args)
+
+  if args.count == 1; STDERR.puts(args.first.inspect);
+  else; STDERR.puts(args.inspect); end
+end
+

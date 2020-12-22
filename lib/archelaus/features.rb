@@ -104,46 +104,92 @@ module Archelaus
     end
 
     class Nwr
-      TAGS_TO_DISCARD = %w[ source ]
+
       attr_reader :dict, :data
+
       def initialize(dict, d); @dict = dict; @data = d; end
+
       def id; @data['id']; end
       def type; @data['type']; end
       def tags; @data['tags'] || {}; end
+
       def t
-        tags
-          .reject { |k, _| TAGS_TO_DISCARD.include?(k) }
-          .collect { |k, v| "#{k}: #{v}" }
-          .join(', ')
+
+        @t ||=
+          tags
+            .collect { |k, v| rewrite_tag(k, v) }
+            .compact
+            .join(', ')
       end
+
       protected
+
       def grid; @dict.grid; end
+
+      def rewrite_tag(k, v)
+
+        km = "rewrite_tag_key_#{k}"
+        return send(km, k, v) if respond_to?(km, true)
+
+        vm = "rewrite_tag_val_#{k}"
+        return send(vm, k, v) if respond_to?(vm, true)
+
+        "#{k.gsub(/_/,' ')}: #{v}"
+#.tap { |x| rp x }
+
+        # "leaf type: needleleaved"
+        # "leaf type: broadleaved"
+        #   :-)
+      end
+
+      def rewrite_tag_drop_key(_, v); v; end
+      def rewrite_discard(_, _); nil; end
+
+      alias rewrite_tag_key_source rewrite_discard
+      alias rewrite_tag_key_natural rewrite_tag_drop_key
+      alias rewrite_tag_key_landuse rewrite_tag_drop_key
+      alias rewrite_tag_key_water rewrite_tag_drop_key
+      alias rewrite_tag_key_waterway rewrite_tag_drop_key
+      alias rewrite_tag_key_name rewrite_tag_drop_key
     end
+
     class Node < Nwr
+
       def lat; @data['lat']; end
       def lon; @data['lon']; end
     end
+
     class Way < Nwr
+
       def nodes
+
         @nodes ||=
           @data['nodes'].collect { |i| dict.node(i) }
       end
+
       def hexes
+
         @hexes ||=
           filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
       end
+
       protected
+
       def filter(hexes)
+
         if tags['waterway']
           filter_waterway(hexes)
         else
           hexes
         end
       end
+
       def filter_waterway(hexes)
+
         hexes.reject { |h| h.ele == nil }
       end
     end
+
     class Relation < Nwr
     end
   end
