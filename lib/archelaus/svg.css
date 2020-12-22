@@ -126,6 +126,19 @@ use[href="#H"] {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+#help .title {
+  font-size: 140%;
+}
+#help ul {
+  list-style: none;
+  padding-inline-start: 0;
+}
+#help li b {
+  margin-right: 1.4em;
+  width: 28%;
+  display: inline-block;
+  text-align: right;
+}
 
 path.ww {
   fill: none;
