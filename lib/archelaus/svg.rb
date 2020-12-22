@@ -62,16 +62,9 @@ module Archelaus
       # unit is meter ;-)
       # from one hex to the next there is 100m
 
-      #viewbox = [ 0, 0, 300 * 100, 300 * 100 ]
-      #viewbox = [ 0, 0, 300 * 20, 300 * 20 ]
-      #viewbox = [ 0, 0, 5000, 5000 ]
-      #viewbox = [ 8925, -689, 5000, 5000 ]
-      #viewbox = [ 0, 0, 2000, 2000 ]
-      viewbox = [ -100, -100, 8000, 8000 ]
-
       svg = make(body, :svg,
         id: 'svg-map',
-        viewBox: viewbox.collect(&:to_s).join(' '),
+        viewBox: '-50 -50 10000 10000',
         preserveAspectRatio: 'xMinYMin slice',
         xmlns: 'http://www.w3.org/2000/svg',
         width: '100%', height: '100%')
