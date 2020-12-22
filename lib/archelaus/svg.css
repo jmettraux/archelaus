@@ -116,6 +116,7 @@ use[href="#H"] {
 path.ww {
   fill: none;
   stroke: var(--waterway-c);
+  stroke-linecap: round;
 }
 path.river {
   stroke-width: 8.4;
