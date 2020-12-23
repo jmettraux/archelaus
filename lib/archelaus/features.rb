@@ -116,6 +116,7 @@ module Archelaus
       def t
 
         @t ||=
+          self.class.name.split('::').last[0, 1].downcase + id.to_s + ' ' +
           tags
             .collect { |k, v| rewrite_tag(k, v) }
             .compact
