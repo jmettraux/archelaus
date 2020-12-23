@@ -302,7 +302,7 @@ module Archelaus
 
       hs = way.hexes.sort_by { |h| h.ele }
 
-      seen, d = draw_waterway_segment(way, hs.shift, hs, [], [])
+      seen, d = draw_waterway_segment(svg, way, hs.shift, hs, [], [])
 
       d = d.select { |s| ! seen_segments.include?(s) }
       d.each { |s| seen_segments << s }
@@ -315,7 +315,7 @@ module Archelaus
       seen.first
     end
 
-    def draw_waterway_segment(way, hex, hexes, seen, r)
+    def draw_waterway_segment(svg, way, hex, hexes, seen, r)
 
       seen << hex
 
@@ -327,14 +327,18 @@ module Archelaus
         hexes.delete(hh)
       end
       h1s.each do |hh|
-        draw_waterway_segment(way, hh, hexes, seen, r) if hexes.any?
+        draw_waterway_segment(svg, way, hh, hexes, seen, r) if hexes.any?
       end
       if h1s.empty? && hexes.any?
         h2 = hexes.shift
         h1 = h2.closest(seen)
 #rp "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy} <-- #{h1.xye} #{h2.xye}"
         r << "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}"
-        draw_waterway_segment(way, h2, hexes, seen, r)
+        #make(
+        #  svg, :path,
+        #  class: 'red', d: "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}",
+        #  'data-t': way.t)
+        draw_waterway_segment(svg, way, h2, hexes, seen, r)
       end
 
       [ seen, r ]
