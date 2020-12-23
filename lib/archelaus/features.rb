@@ -41,6 +41,9 @@ module Archelaus
 
       d = JSON.parse(File.read(features_path)) rescue nil; return unless d
       @features = Archelaus::FeatureDict.new(self, d)
+
+      r = File.read(patch_path) rescue nil
+      Kernel.eval(r, binding) if r
     end
 
     protected
@@ -50,6 +53,13 @@ module Archelaus
       File.join(
         'var/features',
         "f__#{origin}_#{origin_corner.lat.to_fixed5}_#{origin_corner.lon.to_fixed5}.json")
+    end
+
+    def patch_path
+
+      File.join(
+        'var/features',
+        "f__#{origin}_#{origin_corner.lat.to_fixed5}_#{origin_corner.lon.to_fixed5}.rb")
     end
   end
 
@@ -101,6 +111,13 @@ module Archelaus
         @ways.values.select { |w|
           w.tags['landuse'] == 'forest' ||
           w.tags['natural'] == 'wood' }
+    end
+
+    def make_node(data)
+
+      d = data.inject('type' => 'node') { |h, (k, v)| h[k.to_s] = v; h }
+
+      @nodes[d['id']] = Archelaus::FeatureDict::Node.new(self, d)
     end
 
     class Nwr
@@ -172,6 +189,11 @@ module Archelaus
 
         @hexes ||=
           filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
+      end
+
+      def add_node(id)
+
+        @data['nodes'] << id
       end
 
       protected
