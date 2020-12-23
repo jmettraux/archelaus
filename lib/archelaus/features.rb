@@ -23,6 +23,7 @@ module Archelaus
 
           node[historic](#{p0p1});
           node[natural=spring](#{p0p1});
+          node[natural=peak](#{p0p1});
         );
         (._;>;);
         out;

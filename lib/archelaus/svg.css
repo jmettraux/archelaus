@@ -166,7 +166,8 @@ circle.w.lake {
 
 path.ww.conn {
 }
-path.red { stroke: red; stroke-width: 10; }
+path.red { stroke: red; stroke-width: 13; }
+path.red2 { stroke: pink; stroke-width: 14; }
 
 /*
 .hidden { display: none; }

@@ -323,6 +323,7 @@ module Archelaus
       seen << hex
 
       dirs = hex.dirs.values
+
       h1s = hexes.select { |h| dirs.include?(h) && hex.ele < h.ele }
 
       h1s.each do |hh|
@@ -332,17 +333,32 @@ module Archelaus
       h1s.each do |hh|
         draw_waterway_segment(svg, way, hh, hexes, seen, r) if hexes.any?
       end
-      if h1s.empty? && hexes.any?
-        h2 = hexes.shift
-        h1 = h2.closest(seen)
-#rp "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy} <-- #{h1.xye} #{h2.xye}"
-        r << "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}"
-        #make(
-        #  svg, :path,
-        #  class: 'red', d: "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}",
-        #  'data-t': way.t)
-        draw_waterway_segment(svg, way, h2, hexes, seen, r)
+
+      return [ seen, r ] unless h1s.empty? || hexes.any?
+
+      h2s = hexes.select { |h| dirs.include?(h) }
+
+      h2s.each do |hh|
+        r << "M #{hex.sx} #{hex.sy} L #{hh.sx} #{hh.sy}"
+        hexes.delete(hh)
       end
+      h2s.each do |hh|
+        draw_waterway_segment(svg, way, hh, hexes, seen, r) if hexes.any?
+      end
+
+      #return [ seen, r ] unless hexes.any?
+      #h3 = hexes
+      #  .sort_by { |hh| Archelaus.compute_distance(hex.latlon, hh.latlon) }
+      #  .first
+      #make(
+      #  svg, :path,
+      #  class: 'red2', d: "M #{hex.sx} #{hex.sy} L #{h3.sx} #{h3.sy}")
+      #h3b = hex.towards(h3)
+      #h3b = nil if h3b && h3b.ele < hex.ele
+      #make(
+      #  svg, :path,
+      #  class: 'red', d: "M #{hex.sx} #{hex.sy} L #{h3b.sx} #{h3b.sy}") if h3b
+      #hexes.delete(h3b)
 
       [ seen, r ]
     end

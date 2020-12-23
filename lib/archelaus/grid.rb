@@ -57,6 +57,23 @@ module Archelaus
         w: self.w, nw: self.nw, ne: self.ne }
     end
 
+    def towards(point)
+
+      return point if dirs.values.include?(point)
+
+      b = Archelaus.compute_bearing(self.latlon, point.latlon)
+      while b < 0; b = b + 360; end
+      while b > 360; b = b - 360; end
+
+      case b
+      when 0...60 then ne
+      when 60...120 then e
+      when 120...180 then se
+      when 180...240 then sw
+      when 240...300 then w
+      else nw; end
+    end
+
     protected
 
     def tget(a, i); i < 0 ? nil : a[i]; end
