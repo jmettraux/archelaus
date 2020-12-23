@@ -152,6 +152,7 @@ path.stream {
   stroke-width: 4.2;
 }
 path.ww.mouth {
+  stroke-linecap: butt;
 }
 circle.w {
   fill: var(--water-c);
