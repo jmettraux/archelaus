@@ -210,12 +210,14 @@ module Archelaus
       #
       # draw waterways
 
+        #.sort_by { |w| - w.max_ele }
       sinks = g.features.waterways
         .collect { |w|
           make_waterway(svg, w) }
       g.features.waterways.zip(sinks)
         .each { |w, s|
           reconnect_waterway(w, svg, "ww #{w.tags['waterway']}", s) }
+#rp [ :conns, $conns ]
 
       #
       # draw ponds and lakes
@@ -357,6 +359,7 @@ module Archelaus
         .sort_by(&:ele)
         .find { |d| d.waterways && ! d.waterways.include?(way) }
       if dh
+#$conns = ($conns || 0) + 1
         make(
           svg, :path,
           class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")

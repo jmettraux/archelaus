@@ -191,6 +191,13 @@ module Archelaus
           filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
       end
 
+      #def eles
+      #  @eles ||=
+      #    hexes.collect { |h| h.ele }.uniq.sort_by { |e| e || 0 }
+      #end
+      #def min_ele; @ele_min ||= eles.min; end
+      #def max_ele; @ele_max ||= eles.max; end
+
       def add_node(id)
 
         @data['nodes'] << id
