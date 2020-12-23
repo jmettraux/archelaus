@@ -210,13 +210,17 @@ module Archelaus
       #
       # draw waterways
 
+      seen_segments = Set.new
+
         #.sort_by { |w| - w.max_ele }
       sinks = g.features.waterways
         .collect { |w|
-          make_waterway(svg, w) }
+          make_waterway(
+            svg, w, seen_segments) }
       g.features.waterways.zip(sinks)
         .each { |w, s|
-          reconnect_waterway(w, svg, "ww #{w.tags['waterway']}", s) }
+          reconnect_waterway(
+            svg, w, "ww #{w.tags['waterway']}", s, seen_segments) }
 #rp [ :conns, $conns ]
 
       #
@@ -292,13 +296,16 @@ module Archelaus
     def wrapt(text); Archelaus::Gen.wrapt(text); end
     def wrapf(path); Archelaus::Gen.wrapf(path); end
 
-    def make_waterway(svg, way)
+    def make_waterway(svg, way, seen_segments)
 
       way.hexes.each { |h| (h.waterways ||= Set.new) << way }
 
       hs = way.hexes.sort_by { |h| h.ele }
 
       seen, d = draw_waterway_segment(way, hs.shift, hs, [], [])
+
+      d = d.select { |s| ! seen_segments.include?(s) }
+      d.each { |s| seen_segments << s }
       d = d.join(' ')
 
       k = "ww #{way.tags['waterway']}"
@@ -325,6 +332,7 @@ module Archelaus
       if h1s.empty? && hexes.any?
         h2 = hexes.shift
         h1 = h2.closest(seen)
+#rp "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy} <-- #{h1.xye} #{h2.xye}"
         r << "M #{h1.sx} #{h1.sy} L #{h2.sx} #{h2.sy}"
         draw_waterway_segment(way, h2, hexes, seen, r)
       end
@@ -332,7 +340,7 @@ module Archelaus
       [ seen, r ]
     end
 
-    def reconnect_waterway(way, svg, klass, lowest_hex)
+    def reconnect_waterway(svg, way, klass, lowest_hex, seen_segments)
 
 #make(svg, :circle, cx: lowest_hex.sx, cy: lowest_hex.sy, r: 7, fill: 'red', class: 'lh')
 
@@ -360,6 +368,8 @@ module Archelaus
         .find { |d| d.waterways && ! d.waterways.include?(way) }
       if dh
 #$conns = ($conns || 0) + 1
+#s = "M #{lowest_hex.sx_sy} L #{dh.sx_sy}"
+#rp "xxx" if seen_segments.include?(s)
         make(
           svg, :path,
           class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")
