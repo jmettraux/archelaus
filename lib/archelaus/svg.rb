@@ -210,6 +210,11 @@ module Archelaus
       #
       # draw waterways
 
+      g.features.waterways
+        .each { |w|
+          w.hexes.each { |h|
+            (h.waterways ||= Set.new) << w } }
+
       seen_segments = Set.new
 
         #.sort_by { |w| - w.max_ele }
@@ -297,8 +302,6 @@ module Archelaus
     def wrapf(path); Archelaus::Gen.wrapf(path); end
 
     def make_waterway(svg, way, seen_segments)
-
-      way.hexes.each { |h| (h.waterways ||= Set.new) << way }
 
       hs = way.hexes.sort_by { |h| h.ele }
 
