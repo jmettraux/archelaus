@@ -328,8 +328,11 @@ module Archelaus
         break if hs.empty?
         #seen vs hs, compute closest pair and link it
         sh, hh, cd = Archelaus.closest_pair(seen, hs)
-make(svg, :path, class: 'red', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
-rp [ :jumped, cd, :remaing, hs.count - 1 ]
+make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
+rp [ :jumped, cd, :remaining, hs.count - 1 ]
+hh1 = sh.towards(hh)
+rp [ sh.xye, :towards, hh1.xye ]
+make(svg, :path, class: 'red', d: "M #{sh.sx} #{sh.sy} L #{hh1.sx} #{hh1.sy}")
 # TODO closest_and_lowest
 break
       end

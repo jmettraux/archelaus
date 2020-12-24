@@ -62,6 +62,15 @@ module Archelaus
       return point if dirs.values.include?(point)
 
       b = Archelaus.compute_bearing(self.latlon, point.latlon)
+      pt = towards_bearing(b)
+
+      return pt if pt
+
+      towards_bearing(b + (b % 60) < 30 ? -60 : 60)
+    end
+
+    def towards_bearing(b)
+
       while b < 0; b = b + 360; end
       while b > 360; b = b - 360; end
 
