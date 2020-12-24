@@ -306,20 +306,33 @@ module Archelaus
 
       hs = way.hexes.sort_by { |h| h.ele }
 
-hs0c = hs.count
-#h0 = hs.first
-      seen, d = draw_waterway_segment(svg, way, hs.shift, hs, [], [])
-h0 = seen.last
-rp [ hs0c, hs.count ] if hs.count > 0
-hs.each do |h|
-  make(
-    svg, :path,
-    class: 'red2', d: "M #{h0.sx} #{h0.sy} L #{h.sx} #{h.sy}")
-  h1 = h.closest(seen)
-  make(
-    svg, :path,
-    class: 'red', d: "M #{h1.sx} #{h1.sy} L #{h.sx} #{h.sy}")
-end
+#hs0c = hs.count
+##h0 = hs.first
+#      seen, d = draw_waterway_segment(svg, way, hs.shift, hs, [], [])
+#h0 = seen.last
+#rp [ hs0c, hs.count ] if hs.count > 0
+#hs.each do |h|
+#  make(
+#    svg, :path,
+#    class: 'red2', d: "M #{h0.sx} #{h0.sy} L #{h.sx} #{h.sy}")
+#  h1 = h.closest(seen)
+#  make(
+#    svg, :path,
+#    class: 'red', d: "M #{h1.sx} #{h1.sy} L #{h.sx} #{h.sy}")
+#end
+      d = []
+      seen = []
+        #
+      loop do
+        draw_waterway_segment(svg, way, hs.shift, hs, seen, d)
+        break if hs.empty?
+        #seen vs hs, compute closest pair and link it
+        sh, hh, cd = Archelaus.closest_pair(seen, hs)
+make(svg, :path, class: 'red', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
+rp [ :jumped, cd, :remaing, hs.count - 1 ]
+# TODO closest_and_lowest
+break
+      end
 
       d = d.select { |s| ! seen_segments.include?(s) }
       d.each { |s| seen_segments << s }

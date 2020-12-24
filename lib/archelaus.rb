@@ -75,6 +75,16 @@ module Archelaus
 
       [ lat1.to_deg, lon1.to_deg ]
     end
+
+    def closest_pair(points0, points1)
+
+      points0.product(points1)
+        .each { |pair|
+          pair << compute_distance(pair[0].latlon, pair[1].latlon) }
+        .sort_by { |_, _, d|
+          d }
+        .first
+    end
   end
 end
 
