@@ -217,16 +217,17 @@ module Archelaus
 
       seen_segments = Set.new
 
-        #.sort_by { |w| - w.max_ele }
       sinks = g.features.waterways
         .collect { |w|
           make_waterway(
             svg, w, seen_segments) }
+
+        # TODO move the sea reconnect into make_waterway
+        #
       g.features.waterways.zip(sinks)
         .each { |w, s|
           reconnect_waterway(
             svg, w, "ww #{w.tags['waterway']}", s, seen_segments) }
-#rp [ :conns, $conns ]
 
       #
       # draw ponds and lakes
@@ -305,7 +306,20 @@ module Archelaus
 
       hs = way.hexes.sort_by { |h| h.ele }
 
+hs0c = hs.count
+#h0 = hs.first
       seen, d = draw_waterway_segment(svg, way, hs.shift, hs, [], [])
+h0 = seen.last
+rp [ hs0c, hs.count ] if hs.count > 0
+hs.each do |h|
+  make(
+    svg, :path,
+    class: 'red2', d: "M #{h0.sx} #{h0.sy} L #{h.sx} #{h.sy}")
+  h1 = h.closest(seen)
+  make(
+    svg, :path,
+    class: 'red', d: "M #{h1.sx} #{h1.sy} L #{h.sx} #{h.sy}")
+end
 
       d = d.select { |s| ! seen_segments.include?(s) }
       d.each { |s| seen_segments << s }
@@ -331,8 +345,8 @@ module Archelaus
         hexes.delete(hh)
       end
       h1s.each do |hh|
-        draw_waterway_segment(svg, way, hh, hexes, seen, r) if hexes.any?
-      end
+        draw_waterway_segment(svg, way, hh, hexes, seen, r)
+      end if hexes.any?
 
       return [ seen, r ] unless h1s.empty? || hexes.any?
 
@@ -343,10 +357,9 @@ module Archelaus
         hexes.delete(hh)
       end
       h2s.each do |hh|
-        draw_waterway_segment(svg, way, hh, hexes, seen, r) if hexes.any?
-      end
+        draw_waterway_segment(svg, way, hh, hexes, seen, r)
+      end if hexes.any?
 
-      #return [ seen, r ] unless hexes.any?
       #h3 = hexes
       #  .sort_by { |hh| Archelaus.compute_distance(hex.latlon, hh.latlon) }
       #  .first
@@ -365,11 +378,11 @@ module Archelaus
 
     def reconnect_waterway(svg, way, klass, lowest_hex, seen_segments)
 
-#make(svg, :circle, cx: lowest_hex.sx, cy: lowest_hex.sy, r: 7, fill: 'red', class: 'lh')
-
       dirs = lowest_hex.dirs.values.reverse
 
       if sea = dirs.find { |d| d && d.ele == nil }
+
+        # connect the lowest hex to an adjacent sea hex...
 
         wx, wy = lowest_hex.sxsy
 
@@ -382,34 +395,22 @@ module Archelaus
           class: klass + ' mouth',
           d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
 
-        return # way is connected to the sea now, over.
-      end
+      else
 
-      dh = dirs
-        .select { |d| d && d.ele < lowest_hex.ele }
-        .sort_by(&:ele)
-        .find { |d| d.waterways && ! d.waterways.include?(way) }
-      if dh
-#$conns = ($conns || 0) + 1
-#s = "M #{lowest_hex.sx_sy} L #{dh.sx_sy}"
-#rp "xxx" if seen_segments.include?(s)
-        make(
-          svg, :path,
-          class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")
-          (dh.waterways ||= Set.new) << way
-        return
-      end
+        # connect to a waterway downstream...
 
-#if lowest_hex.xy == [ 49, 44 ]
-#  rp '---'
-#  rp lowest_hex.xye
-#  dirs.each do |d|
-#    rp [ d.xye, d.wwc ]
-#  end
-#end
-      #make(
-      #  svg, :circle,
-      #  cx: lowest_hex.sx, cy: lowest_hex.sy, r: 10, class: 'lh')
+        dh = dirs
+          .select { |d| d && d.ele < lowest_hex.ele }
+          .sort_by(&:ele)
+          .find { |d| d.waterways && ! d.waterways.include?(way) }
+        if dh
+          make(
+            svg, :path,
+            class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")
+            (dh.waterways ||= Set.new) << way
+          return
+        end
+      end
     end
 
     def make_lake(svg, lake)
