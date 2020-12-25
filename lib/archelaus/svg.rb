@@ -309,6 +309,7 @@ module Archelaus
       d = []
       seen = []
 
+#rp hh.xye if way.id == 50336939
       loop do
 
         draw_waterway_segment(svg, way, hs.shift, hs, seen, d)
@@ -317,16 +318,9 @@ module Archelaus
 
         sh, hh, cd = Archelaus.closest_pair(seen, hs)
 make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
-#rp [ :jumped, cd, :remaining, hs.count - 1 ]
         hh1 = sh.towards(hh)
-#rp [ sh.xye, :towards, hh1.xye ]
-#make(svg, :path, class: 'red', d: "M #{sh.sx} #{sh.sy} L #{hh1.sx} #{hh1.sy}")
         hs.unshift(hh1)
-
-        draw_waterway_segment(svg, way, sh, hs, seen, d)
-
-        break if hs.empty?
-#rp [ :loop, way.tags ]
+        hs.unshift(sh)
       end
 
       d = d.select { |s| ! seen_segments.include?(s) }
