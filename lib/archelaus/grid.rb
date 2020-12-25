@@ -130,6 +130,7 @@ module Archelaus
 
   class Grid
 
+    attr_reader :name
     attr_reader :origin, :rows
     attr_reader :origin_corner
 
@@ -147,6 +148,11 @@ module Archelaus
 
       @origin = origin
       @rows = rows
+    end
+
+    def set_name(s)
+
+      @name = s
     end
 
     def [](x, y=nil)

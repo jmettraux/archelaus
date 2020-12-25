@@ -274,6 +274,7 @@ module Archelaus
       make(body, :script, "window._east = #{east}; window._south = #{south};")
 
       menu = make(body, :div, { id: 'menu' })
+      make(menu, :div, { class: 'name' }, "&#8275; #{g.name} &#8275;") if g.name
       make(menu, :div, { class: 'xy' }, '0/0 0m/0m wi0m')
       make(menu, :div, { class: 'latlon' }, '0.0 0.0')
       make(menu, :div, { class: 'elevation' }, '0.0m')
