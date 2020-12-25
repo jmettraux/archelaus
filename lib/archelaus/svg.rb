@@ -377,7 +377,8 @@ make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
         make(
           svg, :path,
           class: klass + ' mouth',
-          d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}")
+          d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}",
+          'data-t': way.t + ', mouth')
 
       else
 
@@ -390,7 +391,8 @@ make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
         if dh
           make(
             svg, :path,
-            class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}")
+            class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}",
+            'data-t': way.t + ', (conn)')
             (dh.waterways ||= Set.new) << way
           return
         end
