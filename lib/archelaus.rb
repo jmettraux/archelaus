@@ -78,12 +78,24 @@ module Archelaus
 
     def closest_pair(points0, points1)
 
+      closest_pairs(points0, points1)
+        .first
+    end
+
+    def closest_ele_pair(lows, highs)
+
+      ps = closest_pairs(lows, highs)
+        .select { |l, h| l.ele < h.ele }
+        .first
+    end
+
+    def closest_pairs(points0, points1)
+
       points0.product(points1)
         .each { |pair|
           pair << compute_distance(pair[0].latlon, pair[1].latlon) }
         .sort_by { |_, _, d|
           d }
-        .first
     end
   end
 end

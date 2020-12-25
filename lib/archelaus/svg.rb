@@ -308,19 +308,27 @@ module Archelaus
 
       d = []
       seen = []
+      previous_hs = nil
 
-#rp hh.xye if way.id == 50336939
       loop do
+
+        hs.uniq!
 
         draw_waterway_segment(svg, way, hs.shift, hs, seen, d)
 
         break if hs.empty?
 
-        sh, hh, cd = Archelaus.closest_pair(seen, hs)
-make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
-        hh1 = sh.towards(hh)
+        sh, hh, cd = Archelaus.closest_ele_pair(seen, hs)
+#make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
+
+        hh1 = sh.towards_higher(hh) || sh.towards(hh)
+
         hs.unshift(hh1)
         hs.unshift(sh)
+#rp [ :cept, sh.xye, hh.xye, hh1.xye, hs.count, hs.uniq.count ]
+
+        break if previous_hs == hs
+        previous_hs = hs.dup
       end
 
       d = d.select { |s| ! seen_segments.include?(s) }
@@ -341,7 +349,11 @@ make(svg, :path, class: 'red2', d: "M #{sh.sx} #{sh.sy} L #{hh.sx} #{hh.sy}")
       dirs = hex.dirs.values
 
       h1s = hexes.select { |h| dirs.include?(h) && hex.ele < h.ele }
+
+      #return [ seen, r ] if h1s.empty?
       h1s = hexes.select { |h| dirs.include?(h) } if h1s.empty?
+        #
+        # let's flow uphill here for just one hex...
 
       h1s.each do |hh|
         r << "M #{hex.sx} #{hex.sy} L #{hh.sx} #{hh.sy}"

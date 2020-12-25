@@ -57,6 +57,19 @@ module Archelaus
         w: self.w, nw: self.nw, ne: self.ne }
     end
 
+    def towards_higher(point)
+
+      b = Archelaus.compute_bearing(self.latlon, point.latlon)
+
+      [ b, b - 60, b + 60 ].each do |b1|
+        pt = towards_bearing(b1)
+        return pt if pt && pt.ele > self.ele && pt.ele < point.ele
+      end
+
+#rp [ :fail, self.xye ]
+      nil
+    end
+
     def towards(point)
 
       return point if dirs.values.include?(point)
