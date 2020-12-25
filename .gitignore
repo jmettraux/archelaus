@@ -17,4 +17,5 @@ var/elevations/*.json
 
 var/features/*.json
 var/features/*.rb
+var/public/*.html
 
