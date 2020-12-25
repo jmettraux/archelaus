@@ -17,6 +17,11 @@ module Archelaus::Gen
 
       Archelaus::Gen::FileContent.new(path)
     end
+
+    def makec(parent, text)
+
+      Archelaus::Gen::Comment.new(parent, text)
+    end
   end
 
   class Node
@@ -105,6 +110,20 @@ module Archelaus::Gen
     def write_to_io(o)
 
       File.open(@path) { |f| o.write(f.read) }
+    end
+  end
+
+  class Comment
+
+    def initialize(parent, text)
+
+      parent << self
+      @text = text
+    end
+
+    def write_to_io(o)
+
+      o << "\n<!-- " << @text << ' -->'
     end
   end
 end

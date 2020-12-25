@@ -266,6 +266,8 @@ module Archelaus
         end
       end
 
+      makec(body, %{ generated with https://github.com/jmettraux/archelaus })
+
       east = east.to_i + 50
       south = south.to_i + 50
         #
@@ -301,6 +303,7 @@ module Archelaus
     def make(*args); Archelaus::Gen.make(*args); end
     def wrapt(text); Archelaus::Gen.wrapt(text); end
     def wrapf(path); Archelaus::Gen.wrapf(path); end
+    def makec(parent, text); Archelaus::Gen.makec(parent, text); end
 
     def make_waterway(svg, way, seen_segments)
 
