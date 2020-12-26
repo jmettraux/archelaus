@@ -280,28 +280,23 @@ module Archelaus
         #
       make(body, :script, "window._east = #{east}; window._south = #{south};")
 
-      menu = make(body, :div, { id: 'menu' })
-      make(menu, :div, { class: 'name' }, "&#8275; #{g.name} &#8275;") if g.name
-      make(menu, :div, { class: 'xy' }, '0/0 0m/0m wi0m')
-      make(menu, :div, { class: 'latlon' }, '0.0 0.0')
-      make(menu, :div, { class: 'elevation' }, '0.0m')
-      make(menu, :div, { class: 'text' }, 'hex')
-      nav = make(menu, :div, { class: 'nav' })
-
+      make(
+        body,
+        :div, { id: 'menu' },
+        wrapf(File.join(__dir__, 'svg_menu.html')))
       make(
         body,
         :div, { id: 'help', style: 'display: none;' },
         wrapf(File.join(__dir__, 'svg_help.html')))
 
-      make(nav, :span, { class: 'nw' }, 'NW')
-      make(nav, :span, { class: 'ne' }, 'NE')
-      make(nav, :span, { class: 'c' }, 'C')
-      make(nav, :span, { class: 'sw' }, 'SW')
-      make(nav, :span, { class: 'se' }, 'SE')
-      make(nav, :span, { class: 'zall' }, 'zall')
-      make(nav, :span, { class: 'z1km' }, 'z1km')
+      make(body,
+        :script,
+        wrapf(File.join(__dir__, 'svg.js')))
 
-      make(body, :script, wrapf(File.join(__dir__, 'svg.js')))
+      make(body,
+        :script,
+        "elt('#menu .name').innerHTML = \"&#8275; #{g.name} &#8275;\";") \
+          if g.name
 
       puts(html.to_s)
     end
