@@ -57,6 +57,13 @@ module Archelaus
 
       make(head, :style, wrapf(File.join(__dir__, 'svg.css')))
 
+      make(head, :meta,
+        name: 'viewport',
+        #content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+        content: 'user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi')
+          #
+          # https://stackoverflow.com/questions/4472891
+
       body = make(html, :body)
 
       # unit is meter ;-)
