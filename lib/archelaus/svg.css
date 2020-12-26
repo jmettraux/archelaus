@@ -106,9 +106,16 @@ use[href="#H"] {
   font-size: 12px;
   width: 31em;
 }
-#menu > * {
-  text-align: center;
+#menu { display: flex; }
+#menu .col {
+  flex: 1;
 }
+#menu .left {
+  flex: 9;
+  margin-right: 1.4em;
+}
+#menu div { text-align: center; }
+#menu span { text-align: center; }
 #menu .name {
   font-size: 120%;
   font-weight: bold;
@@ -120,6 +127,15 @@ use[href="#H"] {
 }
 #menu .nav > span {
   cursor: pointer;
+  user-select: none;
+}
+#menu .touch {
+  font-size: 280%;
+  opacity: 0.1;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  user-select: none;
 }
 
 #help {
