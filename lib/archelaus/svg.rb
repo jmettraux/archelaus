@@ -278,7 +278,10 @@ module Archelaus
       east = east.to_i + 50
       south = south.to_i + 50
         #
-      make(body, :script, "window._east = #{east}; window._south = #{south};")
+      make(body, :script, %{
+        window._east = #{east}; window._south = #{south};
+        window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
+      })
 
       make(
         body,
