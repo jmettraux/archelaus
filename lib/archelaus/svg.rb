@@ -203,13 +203,9 @@ module Archelaus
               nil
             end
 
-          make(svg, :text,
-            point.ele.to_i.to_s,
-            #point.ele.to_i.to_s + 'm',
-            #point.ele.to_fixed1,
-            #point.el.to_s,
-            #"#{point.ele.to_i} #{point.xy.join(',')}",
-            class: k, x: px, y: py + R0 / 4
+          make(
+            svg, :text,
+            point.ele.to_i.to_s, class: k, x: px, y: py + R0 / 4
               ) if k
         end
       end
