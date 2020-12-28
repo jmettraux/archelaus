@@ -180,6 +180,8 @@ module Archelaus
 
     class Way < Nwr
 
+      def sid; "s#{@data['id']}"; end
+
       def nodes
 
         @nodes ||=

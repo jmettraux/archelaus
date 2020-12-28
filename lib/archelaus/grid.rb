@@ -14,7 +14,8 @@ module Archelaus
       @lon = lon
     end
 
-    def id; "x#{@x}y#{@y}"; end
+    def id; "h_#{@x}_#{@y}"; end
+    alias sid id
 
     def [](i)
 

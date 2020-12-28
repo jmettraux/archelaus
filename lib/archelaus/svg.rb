@@ -17,13 +17,6 @@ module Archelaus
 
     def xye; [ xy, ele ]; end
 
-    def to_data_ll
-
-      "#{x},#{y}" +
-      " #{lat.to_fixed5} #{lon.to_fixed5}" +
-      " #{ele ? ele.to_fixed1 : 's'}"
-    end
-
     def closest(points)
 
       pt = points
@@ -163,6 +156,7 @@ module Archelaus
       east = nil
 
       shexes = {}
+      index = {}
 
       g.rows.each do |row|
 
@@ -180,8 +174,11 @@ module Archelaus
           sh = make(
             svg,
             :use,
-            href: '#h', class: cla, x: px, y: py, 'data-ll': point.to_data_ll)
-          shexes[point.xy] = sh
+            href: '#h', class: cla, x: px, y: py, id: point.sid)
+          shexes[point.xy] =
+            sh
+          index[point.sid] = [
+            *point.xy, *point.latlon, point.ele ]
 
           point.dks
             .each { |k, v| make(svg, :use, href: "#s#{k}#{v}", x: px, y: py)
@@ -271,13 +268,22 @@ module Archelaus
 
       makec(body, %{ generated with https://github.com/jmettraux/archelaus })
 
-      east = east.to_i + 50
-      south = south.to_i + 50
-        #
+      sindex = index
+        .inject(StringIO.new) { |o, (k, v)|
+          o <<
+            k << ':[' <<
+              v[0].to_s << ',' << v[1].to_s << ',' <<
+              v[2].to_fixed5 << ',' << v[3].to_fixed5 << ',' <<
+              (v[4] ? v[4].to_fixed1 : 's') << '],' }
+
       make(body, :script, %{
-        window._east = #{east}; window._south = #{south};
-        window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
-      })
+var s = 's', h = {}; Object.entries({#{sindex.string}}).forEach(function(kv) {
+  var k = kv[0]; var v = kv[1];
+  h[k] = { i: k, x: v[0], y: v[1], lat: v[2], lon: v[3], ele: v[4] } });
+window._hexes = h;
+window._east = #{east.to_i + 50}; window._south = #{south.to_i + 50};
+window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
+      }.strip)
 
       make(
         body,
@@ -342,7 +348,7 @@ module Archelaus
 
       k = "ww #{way.tags['waterway']}"
 
-      make(svg, :path, class: k, d: d, 'data-t': way.t)
+      make(svg, :path, id: way.sid, class: k, d: d, 'data-t': way.t)
 
       seen.first
     end
@@ -387,7 +393,7 @@ module Archelaus
 
         make(
           svg, :path,
-          class: klass + ' mouth',
+          id: way.sid + '-m', class: klass + ' mouth',
           d: "M #{wx} #{wy} L #{wx + dx} #{wy + dy}",
           'data-t': way.t + ', mouth')
 
@@ -402,7 +408,8 @@ module Archelaus
         if dh
           make(
             svg, :path,
-            class: klass + ' conn', d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}",
+            id: way.sid + '-c', class: klass + ' conn',
+            d: "M #{lowest_hex.sx_sy} L #{dh.sx_sy}",
             'data-t': way.t + ', (conn)')
             (dh.waterways ||= Set.new) << way
           return
@@ -415,9 +422,12 @@ module Archelaus
       k = "w #{lake.tags['water']}"
       t = lake.t
 
-      lake.hexes.each do |h|
+      lake.hexes.each_with_index do |h, i|
 
-        make(svg, :circle, cx: h.sx, cy: h.sy, class: k, 'data-t': t)
+        make(
+          svg,
+          :circle,
+          cx: h.sx, cy: h.sy, id: "#{lake.sid}_#{i}", class: k, 'data-t': t)
       end
     end
 
@@ -425,11 +435,12 @@ module Archelaus
 
       t = wood.t
 
-      wood.hexes.each do |h|
+      wood.hexes.each_with_index do |h, i|
 
         sh = shexes[h.xy]
         sh.atts[:class] = "#{sh.atts[:class]} wo"
         sh.atts[:'data-t'] = t
+        sh.atts[:'data-way-id'] = wood.sid
       end
     end
   end
