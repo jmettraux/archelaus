@@ -45,10 +45,19 @@ module Archelaus
       g.load_features
 
       html = make(:html)
+
       head = make(html, :head)
+
       make(head, :title, 'archelaus')
 
-      make(head, :style, wrapf(File.join(__dir__, 'svg.css')))
+      make(head, :style, wrapf('svg.css'))
+
+      make(head, :link,
+        rel: 'icon', href: wrapd('svg_favicon.svg'), type: 'image/svg+xml')
+          #
+          # https://css-tricks.com/svg-favicons-and-all-the-fun-things-we-can-do-with-them/
+          # https://css-tricks.com/lodge/svg/09-svg-data-uris/
+          # https://stackoverflow.com/questions/5199902
 
       make(head, :meta,
         name: 'viewport',
@@ -288,17 +297,19 @@ window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
       make(
         body,
         :div, { id: 'menu' },
-        wrapf(File.join(__dir__, 'svg_menu.html')))
+        wrapf('svg_menu.html'))
       make(
         body,
         :div, { id: 'help', style: 'display: none;' },
-        wrapf(File.join(__dir__, 'svg_help.html')))
+        wrapf('svg_help.html'))
 
-      make(body,
+      make(
+        body,
         :script,
-        wrapf(File.join(__dir__, 'svg.js')))
+        wrapf('svg.js'))
 
-      make(body,
+      make(
+        body,
         :script,
         "elt('#menu .name').innerHTML = \"&#8275; #{g.name} &#8275;\";") \
           if g.name
@@ -308,9 +319,12 @@ window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
 
     protected
 
+    def fjoin(path); File.join(__dir__, path); end
+
     def make(*args); Archelaus::Gen.make(*args); end
     def wrapt(text); Archelaus::Gen.wrapt(text); end
-    def wrapf(path); Archelaus::Gen.wrapf(path); end
+    def wrapf(path); Archelaus::Gen.wrapf(fjoin(path)); end
+    def wrapd(path); Archelaus::Gen.wrapd(fjoin(path)); end
     def makec(parent, text); Archelaus::Gen.makec(parent, text); end
 
     def make_waterway(svg, way, seen_segments)

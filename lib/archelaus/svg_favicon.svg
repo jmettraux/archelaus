@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 130 130">
+<style>
+#h { fill: none; stroke: grey; stroke-width: 11; stroke-linecap: round; }
+text { font-size: 5.6em; fill: grey; stroke: grey; font-family: Helvetica; }
+</style>
+<text x="19" y="87">A</text>
+<path id="h" d="M 50 3.735026918962575 L 100 32.867513459481287 L 100 88.867513459481287 L 50 117.735026918962575 L 0 88.867513459481287 L 0 32.867513459481287 L 50 3.735026918962575"/>
+</svg>

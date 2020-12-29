@@ -18,6 +18,11 @@ module Archelaus::Gen
       Archelaus::Gen::FileContent.new(path)
     end
 
+    def wrapd(path)
+
+      Archelaus::Gen::DataUri.new(path).to_s
+    end
+
     def makec(parent, text)
 
       Archelaus::Gen::Comment.new(parent, text)
@@ -110,6 +115,26 @@ module Archelaus::Gen
     def write_to_io(o)
 
       File.open(@path) { |f| o.write(f.read) }
+    end
+  end
+
+  class DataUri
+
+    def initialize(path)
+
+      @path = path
+    end
+
+    def to_s
+
+      send("#{File.extname(@path)[1..-1]}_to_s")
+    end
+
+    protected
+
+    def svg_to_s
+
+      "data:image/svg+xml,#{URI.escape(File.read(@path))}"
     end
   end
 
