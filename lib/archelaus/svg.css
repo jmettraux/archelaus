@@ -23,6 +23,8 @@ body {
   --sea-c: blue;
   --water-c: lightblue;
   --waterway-c: #0033ff;
+
+  --ruler-c: darkgrey;
 }
 
 svg text.t {
@@ -89,6 +91,12 @@ use[href="#snec"]  { stroke-width: var(--sl-se-w); stroke: var(--sl-nw-c); }
 
 use[href="#H"] {
   fill: none; stroke: lightgrey; stroke-width: 4.2; }
+
+path.ruler {
+  fill: none;
+  stroke: var(--ruler-c);
+  stroke-width: 3.5;
+}
 
 #patterns {
   display: none; }
