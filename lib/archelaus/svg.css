@@ -97,10 +97,8 @@ g.ruler path {
   stroke: var(--ruler-c);
   stroke-width: 3.5;
 }
-g.ruler textPath {
-  /*
-  startOffset: 50%;
-  */
+g.ruler text {
+  font-family: sans-serif;
 }
 
 #patterns {
