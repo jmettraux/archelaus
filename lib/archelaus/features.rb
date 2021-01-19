@@ -68,6 +68,7 @@ module Archelaus
 
     attr_reader :grid
     attr_reader :nodes, :ways, :relations
+    attr_reader :blocked_hexes
 
     def initialize(grid, data)
 
@@ -88,6 +89,13 @@ module Archelaus
             @relations[e['id']] = Archelaus::FeatureDict::Relation.new(self, e)
           end
         end
+
+      @blocked_hexes = { waterway: [] }
+    end
+
+    def block_hex(type, x, y)
+
+      (@blocked_hexes[type.to_sym] ||= []) << [ x, y ]
     end
 
     def node(i); @nodes[i]; end
@@ -247,7 +255,10 @@ module Archelaus
 
       def filter_waterway(hexes)
 
-        hexes.reject { |h| h.ele == nil }
+        blocked_hexes = dict.blocked_hexes[:waterway]
+#rp blocked_hexes & hexes.collect(&:xy)
+
+        hexes.reject { |h| h.ele == nil || blocked_hexes.include?(h.xy) }
       end
     end
 
