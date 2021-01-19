@@ -30,6 +30,11 @@ module Archelaus
 
     def latlon; [ @lat, @lon ]; end
 
+    def compute_distance(x)
+
+      Archelaus.compute_distance(latlon, x.latlon)
+    end
+
     def to_point_s; "#{lat.to_fixed5} #{lon.to_fixed5}"; end
 
     def row; @grid.rows[@y]; end

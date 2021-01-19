@@ -116,9 +116,24 @@ module Archelaus
 
     def make_node(data)
 
+      data[:id] =
+        begin
+          i = 1; i = i + 1 while @nodes.has_key?(i)
+          i
+        end unless data[:id]
+
       d = data.inject('type' => 'node') { |h, (k, v)| h[k.to_s] = v; h }
 
       @nodes[d['id']] = Archelaus::FeatureDict::Node.new(self, d)
+
+      d['id']
+    end
+
+    def nodes(point)
+
+      @nodes.values
+        .select { |n| point.compute_distance(n) < 90 }
+        .collect(&:id)
     end
 
     class Nwr
@@ -176,6 +191,7 @@ module Archelaus
 
       def lat; @data['lat']; end
       def lon; @data['lon']; end
+      def latlon; [ @data['lat'], @data['lon'] ]; end
     end
 
     class Way < Nwr
@@ -201,9 +217,21 @@ module Archelaus
       #def min_ele; @ele_min ||= eles.min; end
       #def max_ele; @ele_max ||= eles.max; end
 
-      def add_node(id)
+      def add_node(id, y=nil)
 
-        @data['nodes'] << id
+        if y
+          point = grid[id, y]
+          @data['nodes'] << dict.make_node(lat: point.lat, lon: point.lon)
+        else
+          @data['nodes'] << id
+        end
+      end
+
+      def remove_node(x, y)
+
+        point = grid[x, y]
+        nids = dict.nodes(point)
+        @data['nodes'] = @data['nodes'] - nids
       end
 
       protected
