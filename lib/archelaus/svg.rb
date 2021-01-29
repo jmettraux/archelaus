@@ -236,7 +236,7 @@ module Archelaus
       g.features.waterways.zip(sinks)
         .each { |w, s|
           reconnect_waterway(
-            svg, w, "ww #{w.tags['waterway']}", s, seen_segments) }
+            svg, w, "ww #{w.tags['waterway']}", s, seen_segments) if s }
 
       #
       # draw ponds and lakes
@@ -339,7 +339,7 @@ window._max_x = #{g.rows.size}; window._max_y = #{g.rows.first.size};
 
         hs.uniq!
 
-        draw_waterway_segment(svg, way, hs.shift, hs, seen, d)
+        draw_waterway_segment(svg, way, hs.shift, hs, seen, d) if hs.any?
 
         break if hs.empty?
 
