@@ -23,8 +23,8 @@ wid, hei = ARGV.shift.to_i, ARGV.shift.to_i
 wid = 100 if wid < 1
 hei = 100 if hei < 1
 
-  # bin/fetch NE 54.41845 -0.23099
-  # bin/fetch NW 54.44860 -0.62332
+  # bin/fetchf NE 54.41845 -0.23099
+  # bin/fetchf NW 54.44860 -0.62332
   #
 grid = Archelaus.compute_grid(
   lat, lon,
@@ -32,5 +32,13 @@ grid = Archelaus.compute_grid(
   wid, hei,
   corner.downcase.to_sym)
 
-Archelaus.fetch_features(grid)
+slat = "%.5f" % lat
+slon = "%.5f" % lon
+fn = "var/features/f__#{corner.downcase}_#{slat}_#{slon}.json"
+
+File.open(fn, 'wb') do |f|
+  f.puts(Archelaus.fetch_features(grid))
+end
+
+puts "...wrote #{fn}"
 

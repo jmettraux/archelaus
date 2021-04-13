@@ -11,6 +11,12 @@ https://en.wikipedia.org/wiki/Terrain_cartography
 100m or 330ft
 ```
 
+```
+bin/fetche NW 61.13005 4.67880
+bin/fetchf NW 61.13005 4.67880
+bin/generate NW 61.13005 4.67880 > var/public/olderoyna.html
+```
+
 
 ## license
 

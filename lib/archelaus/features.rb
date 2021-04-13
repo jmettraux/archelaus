@@ -30,7 +30,7 @@ module Archelaus
       }
         .split("\n").collect(&:strip).reject { |e| e[0, 1] == '#' }.join('')
 
-      puts http_get(OVERPASS_URI, data: q)
+      http_get(OVERPASS_URI, data: q)
     end
   end
 
