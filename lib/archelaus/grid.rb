@@ -69,7 +69,7 @@ module Archelaus
 
       [ b, b - 60, b + 60 ].each do |b1|
         pt = towards_bearing(b1)
-        return pt if pt && pt.ele > self.ele && pt.ele < point.ele
+        return pt if pt && (pt.ele > self.ele) && (pt.ele < point.ele)
       end
 
 #rp [ :fail, self.xye ]
