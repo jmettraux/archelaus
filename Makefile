@@ -21,6 +21,9 @@ fetche:
 fetchf:
 	bin/fetchf NW 55.70012 -1.93233
 
+liste:
+	ruby -Ilib -r make -e "Make.liste"
+
 d:
 	scp var/public/robin_hood_bay.html shooto:/var/www/htdocs/weaver.skepti.ch/rhb.html
 
