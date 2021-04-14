@@ -40,5 +40,5 @@ File.open(fn, 'wb') do |f|
   f.puts(Archelaus.fetch_features(grid))
 end
 
-puts "...wrote #{fn}"
+$stderr.puts "...wrote #{fn}"
 
