@@ -58,6 +58,9 @@ module Archelaus
 
       lat, lon = to_latlon(point_or_latlon)
 
+      d = elevation_filedir(lat, lon)
+      FileUtils.mkdir_p(d) unless File.directory?(d)
+
       File.open(elevation_filename(point_or_latlon), 'wb') do |f|
         f.print(JSON.dump(lat: lat, lon: lon, ele: elevation))
       end
@@ -73,11 +76,18 @@ module Archelaus
       JSON.parse(File.read(elevation_filename(point_or_latlon)))
     end
 
+    def elevation_filedir(lat, lon)
+
+      "var/elevations/d__#{lat.to_fixed1s}__#{lon.to_fixed1s}"
+    end
+
     def elevation_filename(point_or_latlon)
 
       lat, lon = to_latlon(point_or_latlon)
 
-      "var/elevations/e__#{lat.to_fixed5}__#{lon.to_fixed5}.json"
+      File.join(
+        elevation_filedir(lat, lon),
+        "e__#{lat.to_fixed5}__#{lon.to_fixed5}.json")
     end
 
     def to_latlon(point_or_latlon)

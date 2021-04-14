@@ -2,6 +2,7 @@
 require 'cgi'
 require 'set'
 require 'json'
+require 'fileutils'
 require 'net/http'
 
 require 'additions'

@@ -18,5 +18,7 @@ class Float
 
   def to_fixed1; sprintf('%#.01f', self); end
   def to_fixed2; sprintf('%#.02f', self); end
+
+  def to_fixed1s; sprintf('%#.01f', self).sub(/-/, '_'); end
 end
 

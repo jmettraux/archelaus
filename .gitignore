@@ -13,7 +13,7 @@
 .errors
 .rspec.out
 
-var/elevations/*.json
+var/elevations/*
 
 var/features/*.json
 var/features/*.rb
