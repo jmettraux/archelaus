@@ -68,6 +68,9 @@ use[href="#h"].s {
   opacity: 0.2; }
 use[href="#h"].cursor {
   fill: darkgrey !important; }
+/*
+use[href="#h"].s { stroke: white; }
+*/
 
 path.slope { fill: none; }
 use[href="#sea"]   { stroke-width: var(--sl-se-w); stroke: var(--sl-se-c); }
