@@ -101,10 +101,11 @@ module Archelaus
   end
 end
 
+require 'archelaus/grid'
 require 'archelaus/gen'
 require 'archelaus/svg'
+require 'archelaus/scad'
 require 'archelaus/http'
-require 'archelaus/grid'
 require 'archelaus/features'
 require 'archelaus/elevations'
 
