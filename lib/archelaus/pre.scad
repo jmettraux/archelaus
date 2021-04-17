@@ -4,7 +4,7 @@
 hexd = 10;
 hexr = hexd / 2;
 sea_hex_ele = 2;
-ele_factor = 1.0;
+ele_factor = 1.1;
 
 function hei(ele) = sea_hex_ele + 1 + ele * ele_factor / 10;
 

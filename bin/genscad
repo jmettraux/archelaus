@@ -17,11 +17,22 @@ wid, hei = ARGV.shift.to_i, ARGV.shift.to_i
 wid = 100 if wid < 1
 hei = 100 if hei < 1
 
+x0, y0 = ARGV.shift.to_i, ARGV.shift.to_i
+x1, y1 = ARGV.shift.to_i, ARGV.shift.to_i
+x0 = 0 if x0 < 1; y0 = 0 if y0 < 1
+x1 = wid if x1 < 1; y1 = hei if y1 < 1
+
+x0 = 0
+x1 = 50
+y0 = 20
+y1 = 100
+
 Archelaus.generate_scad(
   lat, lon,
   100, # meters, 100m between one hexagon to the next
   wid, hei,
-  corner.downcase.to_sym)
+  corner.downcase.to_sym,
+  x0, y0, x1, y1)
     #
     # bin/generate NE 54.41845 -0.23099
 
