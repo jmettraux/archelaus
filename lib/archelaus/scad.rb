@@ -5,7 +5,11 @@ module Archelaus
 
     def to_scad
 
-      "hex(#{x}, #{y}, #{ele}); // #{lat} / #{lon}"
+      if ele == nil
+        "shex(#{x}, #{y});"
+      else
+        "hex(#{x}, #{y}, #{ele}); // #{lat} / #{lon}"
+      end
     end
   end
 
@@ -19,11 +23,19 @@ module Archelaus
       g.load_elevations
       #g.load_features
 
+      puts "// ground"
+
       g.rows.each do |row|
         row.each do |point|
-          next unless point.ele
-          #p point
-          puts point.to_scad
+          puts point.to_scad if point.ele
+        end
+      end
+
+      puts "// sea"
+
+      g.rows.each do |row|
+        row.each do |point|
+          puts point.to_scad if point.ele == nil
         end
       end
     end
