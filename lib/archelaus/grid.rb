@@ -282,6 +282,8 @@ module Archelaus
 
     def crop(x0, y0, x1, y1)
 
+      y0 = y0 - 1 if y0 % 2 == 1
+
       Grid.new(
         :nw,
         @rows[y0..y1].collect { |row| row[x0..x1].collect(&:dup) })
