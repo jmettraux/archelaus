@@ -27,31 +27,39 @@ module Archelaus
       g.load_elevations
       #g.load_features
 
+      puts
       puts "// original grid:"
       puts "//"
       puts "// NW: lat #{g.nw.lat.to_fixed5}  lon #{g.nw.lon.to_fixed5}"
       puts "// lowest elevation:   #{(g.lowest_ele || 0).inspect}m"
       puts "// highest elevation:  #{g.highest_ele.inspect}m"
 
+      puts
       puts "// ground"
 
       g.rows.each_with_index do |row, y|
-        next if y < y0 || y > y1
+        #next if y < y0 || y > y1
         row.each do |point|
-          next if point.x < x0 || point.x > x1
+          #next if point.x < x0 || point.x > x1
           puts point.to_scad if point.ele
         end
       end
 
+      puts
       puts "// sea"
 
-      g.rows.each_with_index do |row, y|
-        next if y < y0 || y > y1
-        row.each do |point|
-          next if point.x < x0 || point.x > x1
-          puts point.to_scad if point.ele == nil
-        end
+      #g.rows.each_with_index do |row, y|
+      #  next if y < y0 || y > y1
+      #  row.each do |point|
+      #    next if point.x < x0 || point.x > x1
+      #    puts point.to_scad if point.ele == nil
+      #  end
+      #end
+      if g.lowest_ele == nil
+        puts "sea(0, 0, 99, 99);"
       end
+
+      puts
     end
   end
 end
