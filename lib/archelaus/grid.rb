@@ -14,6 +14,8 @@ module Archelaus
       @lon = lon
     end
 
+    def dup; Point.new(@lat, @lon); end
+
     def id; "h_#{@x}_#{@y}"; end
     alias sid id
 
@@ -276,6 +278,13 @@ module Archelaus
       @rows = @rows[0, ly].collect { |row| row[0, lx] }
 
       self
+    end
+
+    def crop(x0, y0, x1, y1)
+
+      Grid.new(
+        :nw,
+        @rows[x1..y1].collect { |row| row[x0..x1].collect(&:dup) })
     end
 
     def each_point(&block)
