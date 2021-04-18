@@ -176,6 +176,41 @@ module Archelaus
     def width; @rows.first.length; end
     def dim; "#{width}x#{height}"; end
 
+    def nw
+
+      @rows.first.first
+    end
+
+    def _lowest_ele
+
+      le = 99_999.0
+
+      @rows.each do |row|
+        row.each do |point|
+          return nil if point.ele == nil
+          le = point.ele if point.ele && point.ele < le
+        end
+      end
+
+      le
+    end
+
+    def _highest_ele
+
+      he = -99_999.0
+
+      @rows.each do |row|
+        row.each do |point|
+          he = point.ele if point.ele && point.ele > he
+        end
+      end
+
+      he
+    end
+
+    def lowest_ele; @lowest_ele ||= _lowest_ele; end
+    def highest_ele; @highest_ele ||= _highest_ele; end
+
     def locate(lat, lon)
 
       @rows.each_with_index do |row, y|

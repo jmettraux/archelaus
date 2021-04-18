@@ -22,10 +22,10 @@ x1, y1 = ARGV.shift.to_i, ARGV.shift.to_i
 x0 = 0 if x0 < 1; y0 = 0 if y0 < 1
 x1 = wid if x1 < 1; y1 = hei if y1 < 1
 
-x0 = 0
-x1 = 50
-y0 = 20
-y1 = 100
+#x0 = 0
+#x1 = 50
+#y0 = 20
+#y1 = 100
 
 Archelaus.generate_scad(
   lat, lon,

@@ -27,6 +27,12 @@ module Archelaus
       g.load_elevations
       #g.load_features
 
+      puts "// original grid:"
+      puts "//"
+      puts "// NW: lat #{g.nw.lat.to_fixed5}  lon #{g.nw.lon.to_fixed5}"
+      puts "// lowest elevation:   #{(g.lowest_ele || 0).inspect}m"
+      puts "// highest elevation:  #{g.highest_ele.inspect}m"
+
       puts "// ground"
 
       g.rows.each_with_index do |row, y|
