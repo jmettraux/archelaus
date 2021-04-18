@@ -284,7 +284,7 @@ module Archelaus
 
       Grid.new(
         :nw,
-        @rows[x1..y1].collect { |row| row[x0..x1].collect(&:dup) })
+        @rows[y0..y1].collect { |row| row[x0..x1].collect(&:dup) })
     end
 
     def each_point(&block)

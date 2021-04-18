@@ -34,13 +34,26 @@ module Archelaus
       puts "// lowest elevation:   #{(g.lowest_ele || 0).inspect}m"
       puts "// highest elevation:  #{g.highest_ele.inspect}m"
 
+      if [ x0, y0, x1, y1 ] != [ 0, 0, width, height ]
+
+        g = g.crop(x0, y0, x1, y1)
+        g.load_elevations
+
+        puts
+        puts "// cropped grid:"
+        puts "//"
+        puts "// [ #{x0}, #{y0} ] -> [ #{x1}, #{y1} ]"
+        puts "//"
+        puts "// NW: lat #{g.nw.lat.to_fixed5}  lon #{g.nw.lon.to_fixed5}"
+        puts "// lowest elevation:   #{(g.lowest_ele || 0).inspect}m"
+        puts "// highest elevation:  #{g.highest_ele.inspect}m"
+      end
+
       puts
       puts "// ground"
 
       g.rows.each_with_index do |row, y|
-        #next if y < y0 || y > y1
         row.each do |point|
-          #next if point.x < x0 || point.x > x1
           puts point.to_scad if point.ele
         end
       end
@@ -48,15 +61,8 @@ module Archelaus
       puts
       puts "// sea"
 
-      #g.rows.each_with_index do |row, y|
-      #  next if y < y0 || y > y1
-      #  row.each do |point|
-      #    next if point.x < x0 || point.x > x1
-      #    puts point.to_scad if point.ele == nil
-      #  end
-      #end
       if g.lowest_ele == nil
-        puts "sea(0, 0, 99, 99);"
+        puts "sea(0, 0, #{g.width - 1}, #{g.height - 1});"
       end
 
       puts
