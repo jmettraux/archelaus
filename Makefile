@@ -1,7 +1,8 @@
 
 x:
-	@#bin/map NW 61.15005 4.65980 > ~/Downloads/no_olderoyna_nw.html
-	@bin/genscad NW 61.15005 4.65980
+	#@#bin/map NW 61.15005 4.65980 > ~/Downloads/no_olderoyna_nw.html
+	#@bin/genscad NW 61.15005 4.65980
+	bin/map NW 61.15005 4.65980 > var/public/no_olderoyna_nw.html
 
 lnf:
 	bin/generate NW 55.70012 -1.93233 > var/public/lindisfarne.html

@@ -32,10 +32,11 @@ svg text.t {
   stroke: white;
   fill: white;
   font-family: sans-serif;
-  /*font-weight: bold;*/
+  font-weight: bold;
   text-anchor: middle;
   opacity: 1.0;
   user-select: none; }
+/*
 svg text.t.sl {
   font-size: 14;
   stroke: white;
@@ -50,6 +51,7 @@ svg text.t.mn {
   stroke: grey;
   fill: grey;
 }
+*/
 
 use[href="#h"] {
   pointer-events: visible; } /* so that clicking on a hex targets that hex */
