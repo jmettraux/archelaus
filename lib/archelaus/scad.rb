@@ -3,12 +3,12 @@ module Archelaus
 
   class Point
 
-    def to_scad
+    def to_scad(min_ele=0)
 
       if ele == nil
         "shex(#{x}, #{y});"
       else
-        "hex(#{x}, #{y}, #{ele}); // #{lat} / #{lon}"
+        "hex(#{x}, #{y}, #{ele - min_ele}); // #{lat} / #{lon}"
       end
     end
   end
@@ -54,7 +54,7 @@ module Archelaus
 
       g.rows.each_with_index do |row, y|
         row.each do |point|
-          puts point.to_scad if point.ele
+          puts point.to_scad(g.lowest_ele - 0.2) if point.ele
         end
       end
 
