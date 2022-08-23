@@ -9,21 +9,31 @@ module Archelaus
 
       p0p1 = grid.swne.collect(&:to_fixed5).join(',')
 
+      d = 0.0002
+      p0p1b =
+        grid.swne
+      p0p1b =
+        [ p0p1b[0] - d, p0p1b[1] - d, p0p1b[2] + d, p0p1b[3] + d ]
+          .collect(&:to_fixed5).join(',')
+
       q = %{
         [out:json];
         (
-          way[waterway=river](#{p0p1});
-          way[waterway=stream](#{p0p1});
-          way[natural=water](#{p0p1});
+          way[waterway=river](#{p0p1b});
+          way[waterway=stream](#{p0p1b});
+          way[natural=water](#{p0p1b});
 
-          way[natural=wood](#{p0p1});
-          way[landuse=forest](#{p0p1});
+          way[natural=wood](#{p0p1b});
+          way[landuse=forest](#{p0p1b});
 
           way[amenity=place_of_worship](#{p0p1});
 
           node[historic](#{p0p1});
           node[natural=spring](#{p0p1});
           node[natural=peak](#{p0p1});
+
+          rel[type=multipolygon][landuse=forest](#{p0p1b});
+          rel[type=multipolygon][water](#{p0p1b});
         );
         (._;>;);
         out;
@@ -67,16 +77,34 @@ module Archelaus
   class FeatureDict
 
     attr_reader :grid
-    attr_reader :nodes, :ways, :relations
+    attr_reader :nodes, :ways#, :relations
     attr_reader :blocked_hexes
 
     def initialize(grid, data)
 
       @grid = grid
 
+      elements = data['elements'].inject({}) { |h, e| h[e['id']] = e; h }
       @nodes = {}
       @ways = {}
-      @relations = {}
+      #@relations = {}
+
+      data['elements']
+        .each do |e|
+          next unless e['type'] == 'relation'
+          next unless e['tags']['type'] == 'multipolygon'
+          t = e['tags']
+          wood = t['landuse'] == 'forest' || t['natural'] == 'wood'
+          next unless wood
+#$stderr.puts("-" * 80)
+#$stderr.puts(e.inspect)
+          e['members'].each do |m|
+            me = elements[m['ref']]
+            (me['tags'] ||= {})['landuse'] = 'forest'
+          end
+        end
+          #
+          # flag the members of the polygons as "forest"
 
       data['elements']
         .each do |e|
@@ -85,8 +113,8 @@ module Archelaus
             @nodes[e['id']] = Archelaus::FeatureDict::Node.new(self, e)
           when 'way'
             @ways[e['id']] = Archelaus::FeatureDict::Way.new(self, e)
-          when 'relation'
-            @relations[e['id']] = Archelaus::FeatureDict::Relation.new(self, e)
+          #when 'relation'
+          #  @relations[e['id']] = Archelaus::FeatureDict::Relation.new(self, e)
           end
         end
 
@@ -100,7 +128,7 @@ module Archelaus
 
     def node(i); @nodes[i]; end
     def way(i); @ways[i]; end
-    def relation(i); @relations[i]; end
+    #def relation(i); @relations[i]; end
 
     def waterways
 
@@ -177,7 +205,6 @@ module Archelaus
         return send(vm, k, v) if respond_to?(vm, true)
 
         "#{k.gsub(/_/,' ')}: #{v}"
-#.tap { |x| rp x }
 
         # "leaf type: needleleaved"
         # "leaf type: broadleaved"
@@ -263,6 +290,10 @@ module Archelaus
     end
 
     class Relation < Nwr
+
+      def initialize(dict, d);
+        @dict = dict; @data = d;
+      end
     end
   end
 end
