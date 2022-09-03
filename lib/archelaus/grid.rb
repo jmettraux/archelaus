@@ -140,10 +140,10 @@ module Archelaus
   class Grid
 
     attr_reader :name
-    attr_reader :origin, :rows
+    attr_reader :origin, :step, :rows
     attr_reader :origin_corner
 
-    def initialize(origin, rows)
+    def initialize(origin, step, rows)
 
       @origin_corner = rows[0][0]
 
@@ -156,6 +156,7 @@ module Archelaus
           point.xy = [ x, y ] } }
 
       @origin = origin
+      @step = step
       @rows = rows
     end
 
@@ -286,6 +287,7 @@ module Archelaus
 
       Grid.new(
         :nw,
+        @step,
         @rows[y0..y1].collect { |row| row[x0..x1].collect(&:dup) })
     end
 
@@ -316,6 +318,95 @@ module Archelaus
 
       [ sw.lat, sw.lon, ne.lat, ne.lon ]
     end
+
+    def way_lines(nodes)
+
+      nodes.collect { |n| locate(n.lat, n.lon) }.uniq.compact
+    end
+
+    def way_polygon(nodes)
+
+      Polygon.new(self, nodes).enumerate_hexes
+    end
+  end
+
+  class Polygon
+
+    def initialize(grid, nodes)
+
+      @grid = grid
+      @nodes = nodes
+
+      @segments = []
+        #
+      nodes.length.times { |i|
+        @segments << Segment.new(@grid, *nodes.rotate(i)[0, 2]) }
+    end
+
+    def enumerate_hexes
+
+      a = []
+      @grid.rows.each do |row|
+        row.each do |hex|
+          a << hex if (
+            @segments.find { |s| s.includes?(hex) } ||
+            @segments.count { |s| s.intersects?(hex) }.odd?)
+        end
+      end
+
+      a
+    end
+  end
+
+  class Segment
+
+    def initialize(grid, node0, node1)
+
+      @grid = grid
+      @node0 = node0
+      @node1 = node1
+
+      @hexes = list_hexes
+    end
+
+    def includes?(hex)
+
+      @hexes.include?(hex)
+    end
+
+    def intersects?(hex)
+
+return false
+      return false if @hexes.empty?
+
+      h = hex
+      loop do
+        return true if includes?(h)
+        h = h.e; break if h.nil? # go east until grid ends...
+      end
+
+      false
+    end
+
+    protected
+
+    def list_hexes
+
+      ber = Archelaus.compute_bearing(@node0.latlon, @node1.latlon)
+      dis = Archelaus.compute_distance(@node0.latlon, @node1.latlon)
+      step3 = @grid.step / 3
+
+      a = []
+      d = 0
+      loop do
+        pt = @grid.locate(*Archelaus.compute_point(@node0.latlon, ber, d))
+        a << pt if pt
+        d = d + step3
+        break if d > dis + step3
+      end
+
+      a
+    end
   end
 
   class << self
@@ -345,6 +436,7 @@ module Archelaus
 
       Archelaus::Grid.new(
         origin,
+        step,
         compute_line(-1, lat, lon, step, col_angles, height)
           .each_with_index
           .collect { |p0, y|

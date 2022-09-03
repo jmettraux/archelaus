@@ -96,11 +96,12 @@ module Archelaus
           t = e['tags']
           wood = t['landuse'] == 'forest' || t['natural'] == 'wood'
           next unless wood
-#$stderr.puts("-" * 80)
-#$stderr.puts(e.inspect)
+          e['members'].reject! { |m| m['role'] == 'inner' }
           e['members'].each do |m|
             me = elements[m['ref']]
-            (me['tags'] ||= {})['landuse'] = 'forest'
+            tags = (me['tags'] ||= {})
+            tags['landuse'] = 'forest'
+            tags['polygon'] = true if m['role']# == 'outer'
           end
         end
           #
@@ -242,7 +243,12 @@ module Archelaus
       def hexes
 
         @hexes ||=
-          filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
+          if tags['polygon']
+            grid.way_polygon(nodes)
+          else
+            #filter(nodes.collect { |n| grid.locate(n.lat, n.lon) }.uniq.compact)
+            filter(grid.way_lines(nodes))
+          end
       end
 
       #def eles
