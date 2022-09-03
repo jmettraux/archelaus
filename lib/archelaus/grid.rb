@@ -367,6 +367,12 @@ module Archelaus
       @node1 = node1
 
       @hexes = list_hexes
+
+      #  # f(x) = s * x + i
+      #  # lat = f(lon) = s * lon + i
+      #  #
+      #@slope = (@node0.lat - @node1.lat) / (@node0.lon - @node1.lon)
+      #@intercept = @node0.lat - @slope * @node0.lon
     end
 
     def includes?(hex)
@@ -376,17 +382,33 @@ module Archelaus
 
     def intersects?(hex)
 
-return false
-      return false if @hexes.empty?
-
-      h = hex
-      loop do
-        return true if includes?(h)
-        h = h.e; break if h.nil? # go east until grid ends...
-      end
-
       false
     end
+
+#    def minlat; @minlat ||= [ @node0.lat, @node1.lat ].min; end
+#    def maxlat; @maxlat ||= [ @node0.lat, @node1.lat ].max; end
+#    def maxlon; @maxlon ||= [ @node0.lon, @node1.lon ].max; end
+#
+#    def intersects?(hex)
+#
+#      return false if hex.lat > maxlat || hex.lat < minlat
+#      return false if hex.lon > maxlon
+#
+#      hex.lon > (hex.lat - @intercept) / @slope
+#    end
+
+#    def intersects?(hex)
+#
+#      return false if @hexes.empty?
+#
+#      h = hex
+#      loop do
+#        return true if includes?(h)
+#        h = h.e; break if h.nil? # go east until grid ends...
+#      end
+#
+#      false
+#    end
 
     protected
 
