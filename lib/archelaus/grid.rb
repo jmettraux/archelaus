@@ -367,22 +367,53 @@ module Archelaus
         @segments << Segment.new(@grid, *nodes.rotate(i)[0, 2]) }
     end
 
+#    def enumerate_hexes
+#
+#      a = []
+#      @grid.rows.each do |row|
+#        row.each do |hex|
+#          a << hex if (
+#            @segments.find { |s| s.includes?(hex) } ||
+#            @segments.count { |s| s.intersects?(hex) }.odd?)
+#        end
+#      end
+#
+#      a
+#    end
+
     def enumerate_hexes
 
-      a = []
-      @grid.rows.each do |row|
-        row.each do |hex|
-          a << hex if (
-            @segments.find { |s| s.includes?(hex) } ||
-            @segments.count { |s| s.intersects?(hex) }.odd?)
-        end
-      end
+      hs = @segments.collect(&:hexes).flatten(1).uniq
+#$stderr.puts [ hs.length, hs.uniq.length ].inspect
 
-      a
+      return hs if hs.length < 1
+
+      rows = hs
+        .inject({}) { |h, hex|
+          (h[hex.y] ||= []) << hex
+          h }
+        .values
+        .each { |row|
+          next if row.length < 2
+          row.sort_by(&:x).each_slice(2).each do |sl|
+            next if sl.length != 2
+            hx = sl[0]
+            mx = sl[1].x
+#$stderr.puts [ hx, mx ].inspect
+            while hx.x < mx
+              hs << hx
+              hx = hx.e # go east, towards mx
+            end
+          end
+        }
+
+      hs.uniq
     end
   end
 
   class Segment
+
+    attr_reader :hexes
 
     def initialize(grid, node0, node1)
 
@@ -399,15 +430,15 @@ module Archelaus
       #@intercept = @node0.lat - @slope * @node0.lon
     end
 
-    def includes?(hex)
-
-      @hexes.include?(hex)
-    end
-
-    def intersects?(hex)
-
-      false
-    end
+#    def includes?(hex)
+#
+#      @hexes.include?(hex)
+#    end
+#
+#    def intersects?(hex)
+#
+#      false
+#    end
 
 #    def minlat; @minlat ||= [ @node0.lat, @node1.lat ].min; end
 #    def maxlat; @maxlat ||= [ @node0.lat, @node1.lat ].max; end
@@ -433,13 +464,10 @@ module Archelaus
 #
 #      false
 #    end
-
+#
     protected
 
     def list_hexes
-
-# TODO abate on the borders...
-# TODO list by rows...
 
       ber = Archelaus.compute_bearing(@node0.latlon, @node1.latlon)
       dis = Archelaus.compute_distance(@node0.latlon, @node1.latlon)
