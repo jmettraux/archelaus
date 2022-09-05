@@ -247,6 +247,30 @@ module Archelaus
       nil
     end
 
+    def abate(lat, lon)
+
+      hex, dis = nil, 9_9999
+
+      rs2 = @rows.take(2)
+      lonf = (rs2[0].first.lon + rs2[1].first.lon) / 2
+      lonl = (rs2[0].last.lon + rs2[1].last.lon) / 2
+
+      @rows.each do |r|
+        h = r.first
+        d = Archelaus.compute_distance([ h.lat, lonf ], [ lat, lon ])
+        break if d > dis
+        hex, dis = h, d
+      end
+      @rows.each do |r|
+        h = r.last
+        d = Archelaus.compute_distance([ h.lat, lonl ], [ lat, lon ])
+        break if d > dis
+        hex, dis = h, d
+      end
+
+      hex
+    end
+
     def to_s
 
       w = @rows[0][0].to_point_s.length
@@ -414,20 +438,25 @@ module Archelaus
 
     def list_hexes
 
+# TODO abate on the borders...
+# TODO list by rows...
+
       ber = Archelaus.compute_bearing(@node0.latlon, @node1.latlon)
       dis = Archelaus.compute_distance(@node0.latlon, @node1.latlon)
       step3 = @grid.step / 3
 
       a = []
       d = 0
+        #
       loop do
-        pt = @grid.locate(*Archelaus.compute_point(@node0.latlon, ber, d))
-        a << pt if pt
+        pt = Archelaus.compute_point(@node0.latlon, ber, d)
+        hx = @grid.locate(*pt) || @grid.abate(*pt)
+        a << hx if hx
         d = d + step3
         break if d > dis + step3
       end
 
-      a
+      a.uniq
     end
   end
 
