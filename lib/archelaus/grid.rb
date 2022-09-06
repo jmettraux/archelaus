@@ -367,21 +367,9 @@ module Archelaus
         @segments << Segment.new(@grid, *nodes.rotate(i)[0, 2]) }
     end
 
-#    def enumerate_hexes
-#
-#      a = []
-#      @grid.rows.each do |row|
-#        row.each do |hex|
-#          a << hex if (
-#            @segments.find { |s| s.includes?(hex) } ||
-#            @segments.count { |s| s.intersects?(hex) }.odd?)
-#        end
-#      end
-#
-#      a
-#    end
-
     def enumerate_hexes
+
+      return [] if ! in_grid?
 
       hs = @segments.collect(&:hexes).flatten(1).uniq
 #$stderr.puts [ hs.length, hs.uniq.length ].inspect
@@ -409,11 +397,16 @@ module Archelaus
 
       hs.uniq
     end
+
+    protected
+
+    def in_grid?
+
+      @segments.any?(&:in_grid?)
+    end
   end
 
   class Segment
-
-    attr_reader :hexes
 
     def initialize(grid, node0, node1)
 
@@ -421,57 +414,49 @@ module Archelaus
       @node0 = node0
       @node1 = node1
 
-      @hexes = list_hexes
-
-      #  # f(x) = s * x + i
-      #  # lat = f(lon) = s * lon + i
-      #  #
-      #@slope = (@node0.lat - @node1.lat) / (@node0.lon - @node1.lon)
-      #@intercept = @node0.lat - @slope * @node0.lon
+      @in_grid_hexes = list_in_grid_hexes
     end
 
-#    def includes?(hex)
-#
-#      @hexes.include?(hex)
-#    end
-#
-#    def intersects?(hex)
-#
-#      false
-#    end
+    def in_grid?
 
-#    def minlat; @minlat ||= [ @node0.lat, @node1.lat ].min; end
-#    def maxlat; @maxlat ||= [ @node0.lat, @node1.lat ].max; end
-#    def maxlon; @maxlon ||= [ @node0.lon, @node1.lon ].max; end
-#
-#    def intersects?(hex)
-#
-#      return false if hex.lat > maxlat || hex.lat < minlat
-#      return false if hex.lon > maxlon
-#
-#      hex.lon > (hex.lat - @intercept) / @slope
-#    end
+      @in_grid_hexes.any?
+    end
 
-#    def intersects?(hex)
-#
-#      return false if @hexes.empty?
-#
-#      h = hex
-#      loop do
-#        return true if includes?(h)
-#        h = h.e; break if h.nil? # go east until grid ends...
-#      end
-#
-#      false
-#    end
-#
+    def hexes
+
+      @hexes ||= list_hexes
+    end
+
     protected
+
+    def ber_dis_step
+
+      [ Archelaus.compute_bearing(@node0.latlon, @node1.latlon),
+        Archelaus.compute_distance(@node0.latlon, @node1.latlon),
+        @grid.step / 3 ]
+    end
+
+    def list_in_grid_hexes
+
+      ber, dis, step = ber_dis_step
+
+      a = []
+      d = 0
+        #
+      loop do
+        pt = Archelaus.compute_point(@node0.latlon, ber, d)
+        hx = @grid.locate(*pt)
+        a << hx if hx
+        d = d + step
+        break if d > dis + step
+      end
+
+      a.uniq
+    end
 
     def list_hexes
 
-      ber = Archelaus.compute_bearing(@node0.latlon, @node1.latlon)
-      dis = Archelaus.compute_distance(@node0.latlon, @node1.latlon)
-      step3 = @grid.step / 3
+      ber, dis, step = ber_dis_step
 
       a = []
       d = 0
@@ -480,8 +465,8 @@ module Archelaus
         pt = Archelaus.compute_point(@node0.latlon, ber, d)
         hx = @grid.locate(*pt) || @grid.abate(*pt)
         a << hx if hx
-        d = d + step3
-        break if d > dis + step3
+        d = d + step
+        break if d > dis + step
       end
 
       a.uniq
